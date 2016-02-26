@@ -1,4 +1,4 @@
-docker run -d -it --name test -t ubuntu /bin/bash
+docker run -d -it --name test --cpuset-cpus="1" -t ubuntu /bin/bash
 docker start test
 docker attach test
 
