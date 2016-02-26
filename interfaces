@@ -13,3 +13,5 @@ iface enp2s0 inet static
 address 192.168.215.20
 netmask 255.255.255.0
 gateway 192.168.215.254
+dns-nameservers 193.136.172.20
+dns-nameservers 193.136.172.21

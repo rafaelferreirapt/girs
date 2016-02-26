@@ -1,0 +1,2 @@
+In runtime we changed the memory limit of the container
+docker update -m 500MB {CONTAINER_NAME}

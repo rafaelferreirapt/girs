@@ -1,0 +1,1 @@
+Cassandra wants the 50% of the full memory (host) not the container.
