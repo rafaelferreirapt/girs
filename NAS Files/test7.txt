@@ -1,0 +1,14 @@
+| /Volumes/Share2 @ MBP-de-Rodrigo (RodrigoCunha)
+| => bonnie++ -d . -r 4096 -n 0 -m TEST -f -b -u RodrigoCunha
+Using uid:501, gid:20.
+Writing intelligently...done
+Rewriting...done
+Reading intelligently...done
+start 'em...done...done...done...done...done...
+Version  1.97       ------Sequential Output------ --Sequential Input- --Random-
+Concurrency   1     -Per Chr- --Block-- -Rewrite- -Per Chr- --Block-- --Seeks--
+Machine        Size K/sec %CP K/sec %CP K/sec %CP K/sec %CP K/sec %CP  /sec %CP
+TEST             8G           78299   7 32597   6           66784   7  1093  34
+Latency                        5541ms   10699ms             11237ms     178ms
+
+1.97,1.97,TEST,1,1459445918,8G,,,,78299,7,32597,6,,,66784,7,1093,34,,,,,,,,,,,,,,,,,,,5541ms,10699ms,,11237ms,178ms,,,,,,

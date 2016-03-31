@@ -1,0 +1,13 @@
+| => bonnie++ -d . -r 4096 -n 0 -m TEST -f -b -u RodrigoCunha
+Using uid:501, gid:20.
+Writing intelligently...done
+Rewriting...done
+Reading intelligently...done
+start 'em...done...done...done...done...done...
+Version  1.97       ------Sequential Output------ --Sequential Input- --Random-
+Concurrency   1     -Per Chr- --Block-- -Rewrite- -Per Chr- --Block-- --Seeks--
+Machine        Size K/sec %CP K/sec %CP K/sec %CP K/sec %CP K/sec %CP  /sec %CP
+TEST             8G           72789   6 32983   5           77413   8 940.2  27
+Latency                       27544ms   11565ms             10906ms    3186ms
+
+1.97,1.97,TEST,1,1459453831,8G,,,,72789,6,32983,5,,,77413,8,940.2,27,,,,,,,,,,,,,,,,,,,27544ms,11565ms,,10906ms,3186ms,,,,,,
