@@ -1,0 +1,3 @@
+,,Sequential,Output,,,,,Sequential,Input,,,Random,,Sequential,Create,,,,,Random,Create,
+,,Per Chr, ,Block, ,Rewrite, ,Per Chr, ,Block, ,Seeks, ,Create, ,Read, ,Delete, ,Create, ,Read, ,Delete
+Machine,Size,K/sec,%CP,K/sec,%CP,K/sec,%CP,K/sec,%CP,K/sec,%CP,/sec,%CP,files,/sec,%CP,/sec,%CP,/sec,%CP,/sec,%CP,/sec,%CP,/sec,%CP
