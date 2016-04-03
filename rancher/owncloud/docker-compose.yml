@@ -6,7 +6,7 @@ owncloud:
     - db
   environment:
   volumes:
-    - /media/disk:/var/www/html/storage
+    - /media/disk/owncloud:/var/www/html/storage
 
 db:
   image: mariadb
