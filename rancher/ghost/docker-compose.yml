@@ -1,0 +1,9 @@
+# https://www.youtube.com/watch?v=LESPaJ9_DHE
+ghost:
+  image: ghost:0.7.1
+  ports:
+    - 80:2368
+  volume_driver: convoy
+    - blog:/var/lib/ghost
+  labels:
+    io.rancher.scheduler.affinity:container_label_ne: io.rancher.stack_service_name=$${stack_name}/$${service_name}
