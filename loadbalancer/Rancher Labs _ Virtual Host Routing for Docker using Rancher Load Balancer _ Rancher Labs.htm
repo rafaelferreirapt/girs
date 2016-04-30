@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<!-- saved from url=(0068)http://rancher.com/virtual-host-routing-using-rancher-load-balancer/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style>.hs-cta-wrapper p, .hs-cta-wrapper div { margin: 0; padding: 0; } a#cta_button_468859_8cf87b05-c26a-43ff-b5b4-efffd7991fd3 {
+  -webkit-font-smoothing:antialiased; 
+  cursor:pointer; 
+  -moz-user-select:none; 
+  -webkit-user-select:none; 
+  -o-user-select:none; 
+  user-select:none; 
+  display:inline-block; 
+  font-weight:bold; 
+  text-align:center; 
+  text-decoration:none; 
+  font-family:sans-serif; 
+  background:rgb(68,182,229); 
+  color:rgb(255, 255, 255); 
+  border:2px solid rgb(34,91,114); 
+  text-shadow:none; 
+  line-height:1.5em; 
+  padding:6px 6px; 
+}
+a#cta_button_468859_8cf87b05-c26a-43ff-b5b4-efffd7991fd3:hover {
+background:rgb(74,200,251); 
+color:rgb(255,255,255); 
+}
+a#cta_button_468859_8cf87b05-c26a-43ff-b5b4-efffd7991fd3:active, #cta_button_468859_8cf87b05-c26a-43ff-b5b4-efffd7991fd3:active:hover {
+background:rgb(54,145,183); 
+color:rgb(244,244,244); 
+}
+
+a#cta_button_468859_8cf87b05-c26a-43ff-b5b4-efffd7991fd3 {
+background: #78c9cf;
+border: 0;
+}</style>
+
+<meta name="viewport" content="width=device-width">
+<title>
+	Rancher Labs | 
+	Virtual Host Routing for Docker using Rancher Load Balancer | Rancher Labs</title>
+
+<link rel="profile" href="http://gmpg.org/xfn/11">
+<link rel="pingback" href="http://rancher.com/xmlrpc.php">
+<link rel="shortcut icon" href="http://rancher.com/wp-content/themes/rancher-2016%20/favicon.ico">
+
+<!--[if lt IE 9]>
+<script src="http://rancher.com/wp-content/themes/rancher-2016/js/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+
+<!-- This site is optimized with the Yoast SEO plugin v2.3.5 - https://yoast.com/wordpress/plugins/seo/ -->
+<link rel="canonical" href="http://rancher.com/virtual-host-routing-using-rancher-load-balancer/">
+<meta property="og:locale" content="en_US">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Virtual Host Routing for Docker using Rancher Load Balancer | Rancher Labs">
+<meta property="og:description" content="Hello, I’m Alena Prokharchyk, an engineer at Rancher Labs. In the past I’ve written a couple of articles explaining our Load Balancer functionality within Rancher. First, as a standalone feature, then as a part of our Docker Service Discovery functionality. With these capabilities, we’ve developed a load balancing function that could be used not just for sharing traffic between Docker containers, but also …">
+<meta property="og:url" content="http://rancher.com/virtual-host-routing-using-rancher-load-balancer/">
+<meta property="og:site_name" content="Rancher Labs">
+<meta property="article:tag" content="container service">
+<meta property="article:tag" content="docker compose">
+<meta property="article:tag" content="Docker Load Balancing">
+<meta property="article:tag" content="Docker Management">
+<meta property="article:tag" content="Docker Networking">
+<meta property="article:tag" content="Docker Orchestration">
+<meta property="article:tag" content="Tutorial">
+<meta property="article:section" content="Learning Resource">
+<meta property="article:published_time" content="2015-07-31T08:17:59+00:00">
+<meta property="article:modified_time" content="2016-01-06T16:25:22+00:00">
+<meta property="og:updated_time" content="2016-01-06T16:25:22+00:00">
+<meta property="og:image" content="http://cdn.rancher.com/wp-content/uploads/2015/01/15080936/rancher-cloud-square.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:description" content="Hello, I’m Alena Prokharchyk, an engineer at Rancher Labs. In the past I’ve written a couple of articles explaining our Load Balancer functionality within Rancher. First, as a standalone feature, then as a part of our Docker Service Discovery functionality. With these capabilities, we’ve developed a load balancing function that could be used not just for sharing traffic between Docker containers, but also […]">
+<meta name="twitter:title" content="Virtual Host Routing for Docker using Rancher Load Balancer | Rancher Labs">
+<meta name="twitter:domain" content="Rancher Labs">
+<meta name="twitter:image" content="http://cdn.rancher.com/wp-content/uploads/2015/01/15080936/rancher-cloud-square.png">
+<!-- / Yoast SEO plugin. -->
+
+<link rel="alternate" type="application/rss+xml" title="Rancher Labs » Feed" href="http://rancher.com/feed/">
+<link rel="alternate" type="application/rss+xml" title="Rancher Labs » Comments Feed" href="http://rancher.com/comments/feed/">
+<link rel="alternate" type="application/rss+xml" title="Rancher Labs » Virtual Host Routing for Docker using Rancher Load Balancer Comments Feed" href="http://rancher.com/virtual-host-routing-using-rancher-load-balancer/feed/">
+		<script id="hs-analytics" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/468859.js"></script><script type="text/javascript" async="" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/page.js"></script><script async="" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/analytics.js"></script><script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/72x72\/","ext":".png","source":{"concatemoji":"http:\/\/rancher.com\/wp-includes\/js\/wp-emoji-release.min.js?ver=4.4.2"}};
+			!function(a,b,c){function d(a){var c,d=b.createElement("canvas"),e=d.getContext&&d.getContext("2d"),f=String.fromCharCode;return e&&e.fillText?(e.textBaseline="top",e.font="600 32px Arial","flag"===a?(e.fillText(f(55356,56806,55356,56826),0,0),d.toDataURL().length>3e3):"diversity"===a?(e.fillText(f(55356,57221),0,0),c=e.getImageData(16,16,1,1).data.toString(),e.fillText(f(55356,57221,55356,57343),0,0),c!==e.getImageData(16,16,1,1).data.toString()):("simple"===a?e.fillText(f(55357,56835),0,0):e.fillText(f(55356,57135),0,0),0!==e.getImageData(16,16,1,1).data[0])):!1}function e(a){var c=b.createElement("script");c.src=a,c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var f,g;c.supports={simple:d("simple"),flag:d("flag"),unicode8:d("unicode8"),diversity:d("diversity")},c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.simple&&c.supports.flag&&c.supports.unicode8&&c.supports.diversity||(g=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",g,!1),a.addEventListener("load",g,!1)):(a.attachEvent("onload",g),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),f=c.source||{},f.concatemoji?e(f.concatemoji):f.wpemoji&&f.twemoji&&(e(f.twemoji),e(f.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script><script src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/wp-emoji-release.min.js" type="text/javascript"></script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel="stylesheet" id="contact-form-7-css" href="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/styles.css" type="text/css" media="all">
+<link rel="stylesheet" id="toc-screen-css" href="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/screen.min.css" type="text/css" media="all">
+<link rel="stylesheet" id="tt-easy-google-fonts-css" href="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/css" type="text/css" media="all">
+<link rel="stylesheet" id="app.css-css" href="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/app.css" type="text/css" media="all">
+<link rel="stylesheet" id="style.css-css" href="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/style.css" type="text/css" media="all">
+<link rel="stylesheet" id="A2A_SHARE_SAVE-css" href="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/addtoany.min.css" type="text/css" media="all">
+<link rel="stylesheet" id="hubspot-css" href="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/hubspot.css" type="text/css" media="all">
+<!-- This site uses the Google Analytics by Yoast plugin v5.4.2 - Universal enabled - https://yoast.com/wordpress/plugins/google-analytics/ -->
+<script type="text/javascript">
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','__gaTracker');
+
+	__gaTracker('create', 'UA-56382716-3', 'auto');
+	__gaTracker('set', 'forceSSL', true);
+	__gaTracker('send','pageview');
+
+</script>
+<!-- / Google Analytics by Yoast -->
+<script type="text/javascript" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/jquery.js"></script>
+<script type="text/javascript" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/jquery-migrate.min.js"></script>
+<script type="text/javascript" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/bootstrap.min.js"></script>
+<script type="text/javascript" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/slick.min.js"></script>
+<script type="text/javascript" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/rancher.js"></script>
+<link rel="https://api.w.org/" href="http://rancher.com/wp-json/">
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://rancher.com/xmlrpc.php?rsd">
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://rancher.com/wp-includes/wlwmanifest.xml"> 
+<meta name="generator" content="WordPress 4.4.2">
+<link rel="shortlink" href="http://rancher.com/?p=2177">
+<link rel="alternate" type="application/json+oembed" href="http://rancher.com/wp-json/oembed/1.0/embed?url=http%3A%2F%2Francher.com%2Fvirtual-host-routing-using-rancher-load-balancer%2F">
+<link rel="alternate" type="text/xml+oembed" href="http://rancher.com/wp-json/oembed/1.0/embed?url=http%3A%2F%2Francher.com%2Fvirtual-host-routing-using-rancher-load-balancer%2F&amp;format=xml">
+
+<script type="text/javascript"><!--
+var a2a_config=a2a_config||{},wpa2a={done:false,html_done:false,script_ready:false,script_load:function(){var a=document.createElement('script'),s=document.getElementsByTagName('script')[0];a.type='text/javascript';a.async=true;a.src='http://static.addtoany.com/menu/page.js';s.parentNode.insertBefore(a,s);wpa2a.script_load=function(){};},script_onready:function(){if(a2a.type=='page'){wpa2a.script_ready=true;if(wpa2a.html_done)wpa2a.init();}},init:function(){for(var i=0,el,target,targets=wpa2a.targets,length=targets.length;i<length;i++){el=document.getElementById('wpa2a_'+(i+1));target=targets[i];a2a_config.linkname=target.title;a2a_config.linkurl=target.url;if(el){a2a.init('page',{target:el});el.id='';}wpa2a.done=true;}wpa2a.targets=[];}};a2a_config.callbacks=a2a_config.callbacks||[];a2a_config.callbacks.push({ready:wpa2a.script_onready});
+//--></script>
+			
+							<style id="tt-easy-google-font-styles" type="text/css">
+			
+																						p {
+													}
+								
+																										h1 {
+							font-family: 'Open Sans'; font-style: normal; font-weight: 300; 						}
+								
+																										h2 {
+													}
+								
+																										h3 {
+													}
+								
+																										h4 {
+													}
+								
+																										h5 {
+													}
+								
+																										h6 {
+													}
+								
+										
+							</style>
+						
+<style type="text/css">.pika-single{z-index:9999;display:block;position:relative;color:#333;background:#fff;border:1px solid #ccc;border-bottom-color:#bbb;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif}.pika-single.is-hidden{display:none}.pika-single.is-bound{position:absolute;box-shadow:0 5px 15px -5px rgba(0,0,0,0.5)}.pika-single{*zoom:1}.pika-single:before,.pika-single:after{content:" ";display:table}.pika-single:after{clear:both}.pika-lendar{float:left;width:240px;margin:8px}.pika-title{position:relative;text-align:center}.pika-title select{cursor:pointer;position:absolute;z-index:9998;margin:0;left:0;top:5px;filter:alpha(opacity=0);opacity:0}.pika-label{display:inline-block;*display:inline;position:relative;z-index:9999;overflow:hidden;margin:0;padding:5px 3px;font-size:14px;line-height:20px;font-weight:bold;background-color:#fff}.pika-prev,.pika-next{display:block;cursor:pointer;position:relative;outline:none;border:0;padding:0;width:20px;height:30px;text-indent:20px;white-space:nowrap;overflow:hidden;background-color:transparent;background-position:center center;background-repeat:no-repeat;background-size:75% 75%;opacity:0.5;*position:absolute;*top:0}.pika-prev:hover,.pika-next:hover{opacity:1}.pika-prev.is-disabled,.pika-next.is-disabled{cursor:default;opacity:0.2}.pika-prev,.is-rtl .pika-next{float:left;background-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAAUklEQVR42u3VMQoAIBADQf8Pgj+OD9hG2CtONJB2ymQkKe0HbwAP0xucDiQWARITIDEBEnMgMQ8S8+AqBIl6kKgHiXqQqAeJepBo/z38J/U0uAHlaBkBl9I4GwAAAABJRU5ErkJggg==");*left:0}.pika-next,.is-rtl .pika-prev{float:right;background-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAAU0lEQVR42u3VOwoAMAgE0dwfAnNjU26bYkBCFGwfiL9VVWoO+BJ4Gf3gtsEKKoFBNTCoCAYVwaAiGNQGMUHMkjGbgjk2mIONuXo0nC8XnCf1JXgArVIZAQh5TKYAAAAASUVORK5CYII=");*right:0}.pika-select{display:inline-block;*display:inline}.pika-table{width:100%;border-collapse:collapse;border-spacing:0;border:0}.pika-table th,.pika-table td{width:14.28571%;padding:0}.pika-table th{color:#999;font-size:12px;line-height:25px;font-weight:bold;text-align:center}.pika-table abbr{border-bottom:none;cursor:help}.pika-button{cursor:pointer;display:block;-moz-box-sizing:border-box;box-sizing:border-box;outline:none;border:0;margin:0;width:100%;padding:5px;color:#666;font-size:12px;line-height:15px;text-align:right;background:#f5f5f5}.is-today .pika-button{color:#3af;font-weight:bold}.is-selected .pika-button{color:#fff;font-weight:bold;background:#3af;box-shadow:inset 0 1px 3px #178fe5;border-radius:3px}.is-disabled .pika-button{pointer-events:none;cursor:default;color:#999;opacity:0.3}.pika-button:hover{color:#fff !important;background:#ff8000 !important;box-shadow:none !important;border-radius:3px !important}.pika-week{font-size:11px;color:#999}.hs-form fieldset{border:0;padding:0;margin:0;max-width:500px}.hs-form fieldset.form-columns-1 .hs-input{width:95%}.hs-form fieldset.form-columns-1 .input{margin-right:8px}.hs-form fieldset.form-columns-1 input[type="checkbox"],.hs-form fieldset.form-columns-1 input[type="radio"]{width:auto}.hs-form fieldset.form-columns-2 .hs-form-field{width:50%;float:left}.hs-form fieldset.form-columns-2 .input{margin-right:8px}.hs-form fieldset.form-columns-3 .hs-form-field{width:32.7%;float:left}.hs-form fieldset.form-columns-3 .input{margin-right:8px}.hs-form label.hs-hidden{visibility:hidden}.hs-form .hs-social-login{border-radius:3px;box-sizing:content-box;width:95%;max-width:480px;height:90px}.hsformerror{margin:0 0 2px;padding:2px 6px;height:auto;background-color:#fdd2d0;font-size:11px;border:1px solid #fcb3af;padding:4px 16px 4px 10px;color:#000;display:none;background-image:-webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #fefefe), color-stop(100%, #fdd2d0));background-image:-webkit-linear-gradient(#fefefe, #fdd2d0);background-image:-moz-linear-gradient(#fefefe, #fdd2d0);background-image:-o-linear-gradient(#fefefe, #fdd2d0);background-image:linear-gradient(#fefefe,#fdd2d0);-webkit-border-radius:4px;-moz-border-radius:4px;-ms-border-radius:4px;-o-border-radius:4px;border-radius:4px;-webkit-box-shadow:0 0 6px #ddd;-moz-box-shadow:0 0 6px #ddd;box-shadow:0 0 6px #ddd;z-index:99999}.hsformerror em{border:10px solid;border-color:#fdd2d0 transparent transparent;bottom:-17px;display:block;height:0;left:60px;position:absolute;width:0}.hsformerror p{font-family:Lucida Grande,Lucida Sans Unicode,bitstream vera sans,trebuchet ms,verdana,sans-serif;margin:0;float:left;margin-right:8px}.hsformerror:hover{cursor:default}.hsformerror .close-form-error{float:right;display:inline;top:3px;position:absolute;font-family:Verdana !important;color:#b17c79 !important;cursor:pointer !important;font-size:11px !important;font-weight:normal !important}.hsformerror .close-form-error:hover{color:#cc8884}@media (max-width: 400px), (min-device-width: 320px) and (max-device-width: 480px){form.hs-form .form-columns-2 .hs-form-field,form.hs-form .form-columns-3 .hs-form-field{float:none;width:100%}form.hs-form .form-columns-2 .hs-form-field .hs-input,form.hs-form .form-columns-3 .hs-form-field .hs-input{width:95%}}@media (max-width: 422px){.all-social-types{height:100px}}@media (max-width: 342px){.hs-social-login{height:72px}}</style><link href="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/css(1)" rel="stylesheet" type="text/css"><script type="text/javascript" async="" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/loader-v2.js"></script><style type="text/css">.a2a_menu,.a2a_menu * {-moz-box-sizing:content-box;-webkit-box-sizing:content-box;box-sizing:content-box;float:none;margin:0;padding:0;position: static;height:auto;width:auto;}.a2a_menu {border-radius: 6px;display:none;direction:ltr;background:#FFF;font: 16px sans-serif-light, "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Arial, Helvetica, "Liberation Sans", sans-serif;color:#000;line-height:12px;border: 1px solid #CCC;vertical-align:baseline;outline: 0; overflow:hidden;}.a2a_mini {min-width:200px;position:absolute;width: 300px;z-index:9999997;}.a2a_overlay {display: none;background: #CCC; _height: expression( ((e=document.documentElement.clientHeight)?e:document.body.clientHeight)+"px" ); _width: expression( ((e=document.documentElement.clientWidth)?e:document.body.clientWidth)+"px" ); filter: alpha(opacity=50); opacity: .7;position: fixed;_position: absolute; top: 0;right: 0;left: 0;bottom: 0;z-index: 9999998;-webkit-tap-highlight-color: rgba(0,0,0,0);transition: opacity .14s;}.a2a_full {background: #FFF;height: auto;height: calc(320px);top: 15%;_top: expression(40+((e=document.documentElement.scrollTop)?e:document.body.scrollTop)+"px"); left: 50%;margin-left: -320px; position: fixed;_position: absolute; text-align: center;width: 640px;z-index: 9999999;     transition: transform .14s, opacity .14s;}.a2a_full_header,.a2a_full_services,.a2a_full_footer {border: 0;margin: 0;padding: 12px;box-sizing: border-box;}.a2a_full_header {padding-bottom: 8px;}.a2a_full_services {height: 280px; overflow-y: scroll;padding: 0 12px;-webkit-overflow-scrolling: touch;}.a2a_full_services .a2a_i {display: inline-block;float: none;width: 181px;width: calc(33.334% - 18px);}div.a2a_full_footer {font-size: 12px;text-align: center;padding: 8px 14px;}div.a2a_full_footer a,div.a2a_full_footer a:visited {display: inline;font-size: 12px;line-height:14px;padding: 8px 14px; }div.a2a_full_footer a:hover,div.a2a_full_footer a:focus {background: none;border: 0;color: #0166FF;}div.a2a_full_footer a span.a2a_s_a2a,div.a2a_full_footer a span.a2a_w_a2a {background-size: 14px;border-radius: 3px;display: inline-block;height:14px;line-height:14px;margin: 0 3px 0 0;vertical-align: top;*vertical-align: middle; width:14px;}@media print {.a2a_menu,.a2a_overlay {visibility: hidden;}}@keyframes a2aFadeIn {from { opacity: 0; }  to { opacity: 1; }}.a2a_starting {opacity: 0;}.a2a_starting.a2a_full {transform: scale(.8);}@media (max-width: 639px) {.a2a_full {border-radius: 0;top: 15%;left: 0;margin-left: auto;width: 100%;}}@media (min-width: 318px) and (max-width: 437px) {.a2a_full .a2a_full_services .a2a_i {width: calc(50% - 18px);}}@media (max-width: 317px) {.a2a_full .a2a_full_services .a2a_i {width: calc(100% - 18px);}}@media (max-height: 436px) {.a2a_full {bottom: 40px;height: auto;top: 40px;}}.a2a_menu a {color:#0166FF;text-decoration:none;font: 16px sans-serif-light, "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Arial, Helvetica, "Liberation Sans", sans-serif;line-height:14px;height:auto;width:auto;outline:none;-moz-outline:none;}.a2a_menu a:visited{color:#0166FF}.a2a_menu a:hover,.a2a_menu a:active,.a2a_menu a:focus{color: #2A2A2A;border-color: #EEE;border-style: solid;background-color: #EEE;text-decoration: none;}.a2a_menu span.a2a_s_find {background-size: 24px;height:24px;left: 8px;position:absolute;top: 7px;width:24px;}.a2a_menu span.a2a_s_find svg {background-color: #FFF;}.a2a_menu span.a2a_s_find svg path {fill: #CCC;}#a2a_menu_container{display:inline-block} #a2a_menu_container{_display:inline} .a2a_menu_title_container {padding: 6px 8px;}.a2a_menu_find_container {border: 1px solid #CCC;border-radius: 6px;padding: 2px 24px 2px 0;position: relative;text-align: left;}.a2a_cols_container .a2a_col1{overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch}.a2a_menu input, .a2a_menu input[type="text"]{display:block;background-image:none;box-shadow:none;line-height:100%;margin:0;overflow:hidden;padding:0;-moz-box-shadow:none;-webkit-box-shadow:none;-webkit-appearance:none} .a2a_menu_title_container input.a2a_menu_title {background-color: #FFF;border: 0;color: #2A2A2A;font: inherit;margin: 0;padding: 0;width: 99%;}.a2a_menu_find_container input.a2a_menu_find {background-color: transparent;_background-color: #FFF;border: 0;color: #2A2A2A;font: inherit;font-size: 16px;height: 28px;line-height: 20px;left: 38px;outline: 0;padding: 2px 0;position: relative;width: 99%;}.a2a_clear{clear:both} .a2a_img {background:url(https://static.addtoany.com/menu/icons.35.png);border:0;line-height:16px}.a2a_img,.a2a_svg {background-repeat:no-repeat;display:block;overflow:hidden;}.a2a_img{height:16px;line-height:16px;width:16px;}.a2a_svg{height:32px;line-height:32px;width:32px;}a.a2a_i,i.a2a_i{display:block;float:left;border:1px solid #FFF;line-height:24px;padding:6px 8px;text-align:left;white-space:nowrap;overflow: hidden;text-overflow: ellipsis;width:132px;}a.a2a_i span,a.a2a_more span {display: inline-block;overflow: hidden;vertical-align: top;*vertical-align: middle; }a.a2a_i .a2a_img,a.a2a_i .a2a_svg {margin: 0 6px 0 0;}a.a2a_i .a2a_svg,a.a2a_more .a2a_svg {background-size: 24px;height:24px;line-height:24px;width:24px;}a.a2a_sss:hover {border-left: 1px solid #CCC;}a.a2a_menu_show_more_less{border-bottom:1px solid #FFF;border-left:0;border-right:0;line-height:24px;margin:6px 0 0;padding:6px}a.a2a_menu_show_more_less span{display:inline-block;height:24px;margin:0 6px 0 0;} .a2a_kit .a2a_svg { background-repeat: repeat; }.a2a_default_style a{float:left;line-height:16px;padding:0 2px}.a2a_default_style a:hover .a2a_img,.a2a_default_style a:hover .a2a_svg,.a2a_floating_style a:hover .a2a_img,.a2a_floating_style a:hover .a2a_svg {opacity: .7;}.a2a_default_style .a2a_count,.a2a_default_style .a2a_svg,.a2a_floating_style .a2a_svg,.a2a_vertical_style .a2a_count,.a2a_menu .a2a_svg {border-radius:4px ;}.a2a_default_style .a2a_img, .a2a_default_style .a2a_dd, .a2a_default_style .a2a_svg,.a2a_default_style .a2a_counter img { float: left;}.a2a_default_style .a2a_img_text{margin-right:4px}.a2a_default_style .a2a_divider{border-left:1px solid #000;display:inline;float:left;height:16px;line-height:16px;margin:0 5px}.a2a_kit a{cursor:pointer}.a2a_floating_style { background-color: #fff; border-radius: 6px; padding: 4px; position: fixed; z-index: 9999995;    animation: a2aFadeIn .2s ease-in;}.a2a_vertical_style a { clear: left;display: block;overflow: hidden;padding: 4px;text-decoration: none; }.a2a_floating_style.a2a_default_style { bottom: 0; }.a2a_floating_style.a2a_default_style a { padding: 4px; }.a2a_count {background-color: #fff;border: 1px solid #ccc;box-sizing: border-box;color: #2a2a2a;display: block;float: left;font: 12px Arial,Helvetica,sans-serif;height: 16px;margin-left: 4px;position: relative;text-align: center;width: 50px;}.a2a_count:before,.a2a_count:after {border: solid transparent;border-width: 4px 4px 4px 0;content: "";height: 0;left: 0;line-height: 0;margin: -4px 0 0 -4px;position: absolute;top: 50%;width: 0;}.a2a_count:before {border-right-color: #ccc;}.a2a_count:after {border-right-color: #fff;margin-left: -3px;}.a2a_count span {    animation: a2aFadeIn .14s ease-in;}.a2a_vertical_style .a2a_counter img {display: block;}.a2a_vertical_style .a2a_count {float: none;margin-left: 0;margin-top: 6px; }.a2a_vertical_style .a2a_count:before,.a2a_vertical_style .a2a_count:after {border: solid transparent;border-width: 0 4px 4px 4px;content: "";height: 0;left: 50%;line-height: 0;margin: -4px 0 0 -4px;position: absolute;top: 0;width: 0;}.a2a_vertical_style .a2a_count:before {border-bottom-color: #ccc;}.a2a_vertical_style .a2a_count:after {border-bottom-color: #fff;margin-top: -3px;}.a2a_nowrap{white-space:nowrap}.a2a_note{margin:0 auto;padding:9px;font-size:12px;text-align:center}.a2a_note .a2a_note_note{margin:0;color:#2A2A2A}.a2a_wide a{display:block;margin-top:3px;border-top:1px solid #EEE;text-align:center}.a2a_label {position: absolute !important;clip: rect(1px 1px 1px 1px); clip: rect(1px, 1px, 1px, 1px);overflow: hidden; }iframe.a2a_shim {background-color: transparent;border: 0;bottom: 0;filter: alpha(opacity=0); height: 100%;left: 0;right: 0;top: 0;position: absolute;width: 100%;z-index: 9999996;_height: expression( ((e=document.documentElement.clientHeight)?e:document.body.clientHeight)+"px" ); _width: expression( ((e=document.documentElement.clientWidth)?e:document.body.clientWidth)+"px" ); }.a2a_dd img {border:0;-ms-touch-action:manipulation;}.a2a_button_facebook_like iframe {max-width: none;}iframe[id^="PIN_"][id$="_nag"] {display: none !important;}.a2a_i_a2a{background-position:0 0!important}.a2a_i_a2a_sm{background-position:0 -17px!important}.a2a_i_agregator{background-position:0 -34px!important}.a2a_i_aim{background-position:0 -51px!important}.a2a_i_amazon{background-position:0 -68px!important}.a2a_i_aol{background-position:0 -85px!important}.a2a_i_app_net{background-position:0 -102px!important}.a2a_i_baidu{background-position:0 -119px!important}.a2a_i_balatarin{background-position:0 -136px!important}.a2a_i_behance{background-position:0 -153px!important}.a2a_i_bibsonomy{background-position:0 -170px!important}.a2a_i_bitty{background-position:0 -187px!important}.a2a_i_blinklist{background-position:0 -204px!important}.a2a_i_blogger{background-position:0 -221px!important}.a2a_i_blogmarks{background-position:0 -238px!important}.a2a_i_bookmark{background-position:0 -255px!important}.a2a_i_bookmarks_fr{background-position:0 -272px!important}.a2a_i_box{background-position:0 -289px!important}.a2a_i_buddymarks{background-position:0 -306px!important}.a2a_i_buffer{background-position:0 -323px!important}.a2a_i_care2{background-position:0 -340px!important}.a2a_i_chrome{background-position:0 -357px!important}.a2a_i_citeulike{background-position:0 -374px!important}.a2a_i_dailyrotation{background-position:0 -391px!important}.a2a_i_default{background-position:0 -408px!important}.a2a_i_delicious{background-position:0 -425px!important}.a2a_i_designfloat{background-position:0 -442px!important}.a2a_i_diary_ru{background-position:0 -459px!important}.a2a_i_diaspora{background-position:0 -476px!important}.a2a_i_digg{background-position:0 -493px!important}.a2a_i_dihitt{background-position:0 -510px!important}.a2a_i_diigo{background-position:0 -527px!important}.a2a_i_dzone{background-position:0 -544px!important}.a2a_i_email{background-position:0 -561px!important}.a2a_i_evernote{background-position:0 -578px!important}.a2a_i_facebook{background-position:0 -595px!important}.a2a_i_fark{background-position:0 -612px!important}.a2a_i_feed{background-position:0 -629px!important}.a2a_i_feedblitz{background-position:0 -646px!important}.a2a_i_feedbucket{background-position:0 -663px!important}.a2a_i_feedly{background-position:0 -680px!important}.a2a_i_feedmailer{background-position:0 -697px!important}.a2a_i_find{background-position:0 -714px!important}.a2a_i_firefox{background-position:0 -731px!important}.a2a_i_flickr{background-position:0 -748px!important}.a2a_i_flipboard{background-position:0 -765px!important}.a2a_i_folkd{background-position:0 -782px!important}.a2a_i_foursquare{background-position:0 -799px!important}.a2a_i_github{background-position:0 -816px!important}.a2a_i_gmail{background-position:0 -833px!important}.a2a_i_google{background-position:0 -850px!important}.a2a_i_google_classroom{background-position:0 -867px!important}.a2a_i_google_plus{background-position:0 -884px!important}.a2a_i_hatena{background-position:0 -901px!important}.a2a_i_instagram{background-position:0 -918px!important}.a2a_i_instapaper{background-position:0 -935px!important}.a2a_i_itunes{background-position:0 -952px!important}.a2a_i_jamespot{background-position:0 -969px!important}.a2a_i_kakao{background-position:0 -986px!important}.a2a_i_kik{background-position:0 -1003px!important}.a2a_i_kindle{background-position:0 -1020px!important}.a2a_i_klipfolio{background-position:0 -1037px!important}.a2a_i_known{background-position:0 -1054px!important}.a2a_i_line{background-position:0 -1071px!important}.a2a_i_linkedin{background-position:0 -1088px!important}.a2a_i_livejournal{background-position:0 -1105px!important}.a2a_i_mail_ru{background-position:0 -1122px!important}.a2a_i_mendeley{background-position:0 -1139px!important}.a2a_i_meneame{background-position:0 -1156px!important}.a2a_i_miro{background-position:0 -1173px!important}.a2a_i_mixi{background-position:0 -1190px!important}.a2a_i_myspace{background-position:0 -1207px!important}.a2a_i_netlog{background-position:0 -1224px!important}.a2a_i_netvibes{background-position:0 -1241px!important}.a2a_i_netvouz{background-position:0 -1258px!important}.a2a_i_newsalloy{background-position:0 -1275px!important}.a2a_i_newsisfree{background-position:0 -1292px!important}.a2a_i_newsvine{background-position:0 -1309px!important}.a2a_i_nujij{background-position:0 -1326px!important}.a2a_i_odnoklassniki{background-position:0 -1343px!important}.a2a_i_oknotizie{background-position:0 -1360px!important}.a2a_i_oldreader{background-position:0 -1377px!important}.a2a_i_outlook_com{background-position:0 -1394px!important}.a2a_i_pinboard{background-position:0 -1411px!important}.a2a_i_pinterest{background-position:0 -1428px!important}.a2a_i_plurk{background-position:0 -1445px!important}.a2a_i_pocket{background-position:0 -1462px!important}.a2a_i_podnova{background-position:0 -1479px!important}.a2a_i_print{background-position:0 -1496px!important}.a2a_i_printfriendly{background-position:0 -1513px!important}.a2a_i_protopage{background-position:0 -1530px!important}.a2a_i_pusha{background-position:0 -1547px!important}.a2a_i_qzone{background-position:0 -1564px!important}.a2a_i_reddit{background-position:0 -1581px!important}.a2a_i_rediff{background-position:0 -1598px!important}.a2a_i_renren{background-position:0 -1615px!important}.a2a_i_segnalo{background-position:0 -1632px!important}.a2a_i_share{background-position:0 -1649px!important}.a2a_i_sina_weibo{background-position:0 -1666px!important}.a2a_i_sitejot{background-position:0 -1683px!important}.a2a_i_skype{background-position:0 -1700px!important}.a2a_i_slashdot{background-position:0 -1717px!important}.a2a_i_sms{background-position:0 -1734px!important}.a2a_i_snapchat{background-position:0 -1751px!important}.a2a_i_stumbleupon{background-position:0 -1768px!important}.a2a_i_stumpedia{background-position:0 -1785px!important}.a2a_i_svejo{background-position:0 -1802px!important}.a2a_i_symbaloo{background-position:0 -1819px!important}.a2a_i_telegram{background-position:0 -1836px!important}.a2a_i_thefreedictionary{background-position:0 -1853px!important}.a2a_i_thefreelibrary{background-position:0 -1870px!important}.a2a_i_tuenti{background-position:0 -1887px!important}.a2a_i_tumblr{background-position:0 -1904px!important}.a2a_i_twiddla{background-position:0 -1921px!important}.a2a_i_twitter{background-position:0 -1938px!important}.a2a_i_typepad{background-position:0 -1955px!important}.a2a_i_viadeo{background-position:0 -1972px!important}.a2a_i_viber{background-position:0 -1989px!important}.a2a_i_vimeo{background-position:0 -2006px!important}.a2a_i_vk{background-position:0 -2023px!important}.a2a_i_wanelo{background-position:0 -2040px!important}.a2a_i_webnews{background-position:0 -2057px!important}.a2a_i_wechat{background-position:0 -2074px!important}.a2a_i_whatsapp{background-position:0 -2091px!important}.a2a_i_winksite{background-position:0 -2108px!important}.a2a_i_wordpress{background-position:0 -2125px!important}.a2a_i_wykop{background-position:0 -2142px!important}.a2a_i_xing{background-position:0 -2159px!important}.a2a_i_y18{background-position:0 -2176px!important}.a2a_i_yahoo{background-position:0 -2193px!important}.a2a_i_yim{background-position:0 -2210px!important}.a2a_i_yoolink{background-position:0 -2227px!important}.a2a_i_youmob{background-position:0 -2244px!important}.a2a_i_youtube{background-position:0 -2261px!important}.a2a_i_yummly{background-position:0 -2278px!important}</style><link rel="stylesheet" href="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/icons.16.svg.css"></head>
+
+<body class="single single-post postid-2177 single-format-standard" data-pinterest-extension-installed="cr1.39.1">
+
+
+<nav class="nav navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://rancher.com/"><img src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/rancher-logo-white.png" class="img-responsive" alt="Rancher"></a>
+    </div>
+    <div id="navbar" class="collapse navbar-collapse">
+        <div class="menu-menu-header-container"><ul id="menu-menu-header" class="nav navbar-nav"><li id="menu-item-1714" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1714"><a title="Rancher" href="http://rancher.com/rancher/">Rancher</a></li>
+<li id="menu-item-1715" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1715"><a title="RancherOS" href="http://rancher.com/rancher-os/">RancherOS</a></li>
+<li id="menu-item-2423" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-2423"><a title="Forums" href="http://forums.rancher.com/">Forums</a></li>
+<li id="menu-item-3415" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3415"><a title="Learn" href="http://rancher.com/learn/">Learn</a></li>
+<li id="menu-item-1712" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1712"><a title="Blog" href="http://rancher.com/blog/">Blog</a></li>
+<li id="menu-item-1711" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1711"><a title="About" href="http://rancher.com/about/">About</a></li>
+<li id="menu-item-3803" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3803"><a title="Careers" href="http://rancher.com/careers/">Careers</a></li>
+</ul></div>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="http://rancher.com/support" class="btn btn-info btn-lg btn-rect" role="button">Get Support</a></li>
+          
+          <li class="social"><a href="mailto:info@rancher.com" class="vertical-center btn btn-link" target="blank"><img src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/social-email.png" class="img-responsive" alt="email"></a></li>
+
+          <li class="social"><a href="https://github.com/rancherio/rancher" class="vertical-center btn btn-link" target="blank"><img src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/social-github.png" class="img-responsive" alt="github"></a></li>
+
+          <li class="social"><a href="https://twitter.com/Rancher_Labs" class="vertical-center btn btn-link" target="blank"><img src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/social-twitter.png" class="img-responsive" alt="twitter"></a></li>
+
+          <li class="social"><a href="https://www.youtube.com/channel/UCh5Xtp82q8wjijP8npkVTBA/" class="vertical-center btn btn-link" target="blank"><img src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/social-youtube.png" class="img-responsive" alt="youtube"></a></li>
+        </ul>
+    </div><!--/.nav-collapse -->
+</nav>
+
+<div class="jumbotron">
+  <div class="container" style="position:relative">
+    <div class="row">
+      
+      <div class="col-xs-12 bottom-spacer">
+        <h1>Virtual Host Routing for Docker using Rancher Load Balancer</h1>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="bg-white">
+	<div class="container">
+		<div class="row top-spacer bottom-spacer blog-post">
+			<div class="col-sm-8 col-sm-offset-2">
+				
+				<div class="col-sm-8">
+					
+					
+													
+							<p>
+								<a href="http://rancher.com/author/alena/" title="Posts by Alena Prokharchyk" class="url fn" rel="author">Alena Prokharchyk</a> on Jul 31, 2015								
+							</p><!--/post-meta -->
+								
+							<div class="the-content">
+								<p><a href="http://cdn.rancher.com/wp-content/uploads/2015/07/31151759/entireApp_modified_11.png"><img class="alignleft size-medium wp-image-2237" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/entireApp_modified_11-300x144.png" alt="entireApp_modified_1" width="300" height="144"></a>Hello, I’m Alena Prokharchyk, an engineer at Rancher Labs. In the past I’ve written a couple of articles explaining our Load Balancer functionality within Rancher. First, as a standalone <a href="http://rancher.com/load-balancing-support-for-docker-in-rancher/" target="_blank">feature</a>, then as a part of our Docker&nbsp;<a href="http://rancher.com/the-magical-moment-when-container-load-balancing-meets-service-discovery/" target="_blank">Service Discovery</a>&nbsp;functionality.&nbsp;With these capabilities, we’ve developed a&nbsp;load balancing function that&nbsp;could be used&nbsp;not just for sharing&nbsp;traffic between Docker&nbsp;containers, but also for upgrading between software releases with no&nbsp;downtime for users.</p>
+<p>Today I want to walk you through&nbsp;“Virtual Host Routing,” a new set of functionality we added to the&nbsp;Rancher Load Balancer beginning with release 0.29, which allows users to route traffic between multiple services registered within the same LB service, based on a&nbsp;target domain name and/or url path.</p>
+<p>In this article I’m going to walk through how to configure this&nbsp;new configuration, as well as explain some of the use cases we envisioned when building this functionality.<span id="more-2177"></span></p>
+<h3>Use case</h3>
+<p>The typical&nbsp;use case for host-based load balancing is using a single IP address to distribute traffic to multiple&nbsp;services. &nbsp;For my example today, I’ll show how a company can&nbsp;host two different applications&nbsp;– a website&nbsp;and chat – on&nbsp;a single public IP address. In this case, a user would configure Public DNS with two records pointing to the same IP address:</p>
+<p>chat.example.com: 108.162.202.109</p>
+<p>web.example.com: 108.162.202.109</p>
+<p>We’ll then be using two separate applications to deliver these functions: nginx for the&nbsp;website and the wonderful <a href="http://sdelements.github.io/lets-chat/" onclick="__gaTracker(&#39;send&#39;, &#39;event&#39;, &#39;outbound-article&#39;, &#39;http://sdelements.github.io/lets-chat/&#39;, &#39;LetsChat&#39;);" target="_blank">LetsChat</a> for the chat platform. &nbsp;With host load balancing, the traffic can&nbsp;be split between these two services&nbsp;based on the request coming in. If the request is coming for chat.example.com, it will&nbsp;be directed&nbsp;to the LetsChat servers; if the request is for&nbsp;web.example.com – it will&nbsp;be directed to the Nginx nodes.</p>
+<p>Here is how the end setup should&nbsp;look in Rancher:</p>
+<p><a href="http://cdn.rancher.com/wp-content/uploads/2015/07/31151759/entireApp_modified.png"><img class="alignnone size-large wp-image-2214" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/entireApp_modified-1024x491.png" alt="entireApp_modified" width="1024" height="491"></a></p>
+<p>&nbsp;</p>
+<p>Now let’s walk through building&nbsp;this setup from scratch.</p>
+<p><!--more--></p>
+<h3>Create stack and services</h3>
+<p>I’m going to create all of these services within a single Rancher Environment, and a single Rancher Stack. &nbsp;However, it is possible to set up host-based load balancing between services running in different stacks, as well as with external services. The services we’ll create will include a single&nbsp;“mongo”&nbsp;service with one container (needed for the LetsChat service), two&nbsp;“LetsChat” services with two&nbsp;containers each, and two&nbsp;“Nginx” services with two containers each. You’ll notice in the image above I am also creating&nbsp;multiple versions of the nginx and Let’s Chat&nbsp;services (letschat1 and letschat2 for example). I’ve done that to show how you might handle upgrades between different releases of the same software.</p>
+<p>Mongo service:</p>
+<p><a href="http://cdn.rancher.com/wp-content/uploads/2015/07/31151759/mongo1.png"><img class="alignnone size-large wp-image-2257" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/mongo1-1024x643.png" alt="mongo" width="1024" height="643"></a></p>
+<p>&nbsp;</p>
+<p>LetsChat service:</p>
+<p>&nbsp;</p>
+<p><a href="http://cdn.rancher.com/wp-content/uploads/2015/07/31151759/letschat1.png"><img class="alignnone size-large wp-image-2258" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/letschat1-1024x641.png" alt="letschat1" width="1024" height="641"></a></p>
+<p>&nbsp;</p>
+<p>Nginx service:</p>
+<p>&nbsp;</p>
+<p><a href="http://cdn.rancher.com/wp-content/uploads/2015/07/31151759/nginx1.png"><img class="alignnone size-large wp-image-2259" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/nginx1-1024x631.png" alt="nginx" width="1024" height="631"></a></p>
+<h3></h3>
+<h3>Register services to a Load Balancer</h3>
+<p>After all of these&nbsp;services are created, its time to register them on the Load Balancer. Under “Add Service” click on “Add Load Balancer”. The dialog looks very similar to the previous version of Rancher.&nbsp;Define source port as 80 – that is the port the load balancer will be listening on – and click add Target Services. &nbsp;Then click on “Show advanced routing options”:</p>
+<p>&nbsp;</p>
+<p><a href="http://cdn.rancher.com/wp-content/uploads/2015/07/31151759/basic_modified.png"><img class="alignnone size-large wp-image-2232" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/basic_modified-1024x651.png" alt="basic_modified" width="1024" height="651"></a></p>
+<p>&nbsp;</p>
+<p>It will expand the view so that&nbsp;you can set host name routing rules for each service:</p>
+<p><a href="http://cdn.rancher.com/wp-content/uploads/2015/07/31151759/Advanced_modified.png"><img class="alignnone size-large wp-image-2231" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/Advanced_modified-1024x604.png" alt="Advanced_modified" width="1024" height="604"></a></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>I’ve set “chat.example.com” as the “Request Host” for letschat1/letschat2, so that all traffic with the host header “chat.example.com” coming to port 80 of the load balancer, will get balanced across letschat1/letschat2 services listening on port 8080.</p>
+<p>I’ve then set a&nbsp;similar rule for nginx1/nginx2: these services are listening on port 80, and traffic with host header “web.example.com” coming to the load balancer, will be distributed&nbsp;between them.</p>
+<p>&nbsp;</p>
+<p>To test how the things work, I’m going to execute a curl request in format of:</p>
+<pre>curl --header 'Host: &lt;hostname&gt;' 'http://&lt;LB IP&gt;:&lt;LB source port&gt;/login'</pre>
+<p>&nbsp;</p>
+<p>LB IP – should&nbsp;be the public&nbsp;IP address of the Host the Load Balancer instance resides on; or – if the request is internal – it can be the private&nbsp;IP address of the Load Balancer container.</p>
+<p>&nbsp;</p>
+<p>Example:</p>
+<pre>curl --header 'Host: chat.example.com' 'http://108.162.202.109:80/login'</pre>
+<p>&nbsp;</p>
+<p>The request should bring you to your LetsChat&nbsp;service.</p>
+<p>&nbsp;</p>
+<p>To send the request to the Nginx&nbsp;service, execute:</p>
+<pre>curl --header 'Host: web.example.com' 'http://108.162.202.109:80'</pre>
+<p>&nbsp;</p>
+<h3>URL based routing</h3>
+<p>&nbsp;</p>
+<p>We can add even more granularity to our existing hostname routing rules. There might be a&nbsp;case when your application host name is the same, and&nbsp;you want to forward your traffic to a particular service based on URL path:</p>
+<p>&nbsp;</p>
+<pre><code>web.example.com/support -&gt; nginx1
+web.example.com/careers -&gt; nginx2</code></pre>
+<p>&nbsp;</p>
+<p><a href="http://cdn.rancher.com/wp-content/uploads/2015/07/31151759/entireApp_modified_11.png"><img class="alignnone size-large wp-image-2237" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/entireApp_modified_11-1024x491.png" alt="entireApp_modified_1" width="1024" height="491"></a></p>
+<p>&nbsp;</p>
+<p>To support this use case,&nbsp;the way to register services on the Load Balancer gets slightly changed:</p>
+<p>&nbsp;</p>
+<p><a href="http://cdn.rancher.com/wp-content/uploads/2015/07/31151759/urlpath_modified.png"><img class="alignnone size-large wp-image-2235" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/urlpath_modified-1024x596.png" alt="urlpath_modified" width="1024" height="596"></a></p>
+<p>&nbsp;</p>
+<p>As you can see, in addition to configuring Request Host for nginx1&nbsp;and nginx2, I’ve defined the Request Path&nbsp;as well. &nbsp;Now the traffic will not only be balanced between nginx/letschat&nbsp;services based on the host name, but also between nginx1 and nginx2&nbsp;using a &nbsp;more granular criteria, the URL path.</p>
+<p>&nbsp;</p>
+<h2>Internal Load Balancing</h2>
+<p>&nbsp;</p>
+<p>Sometimes you might&nbsp;want&nbsp;to&nbsp;limit your application to internal use only, but you still need some&nbsp;Load Balancer functionality. In the latest&nbsp;release, you are given a choice to pick internal vs public for the load balancer’s source ports.</p>
+<p>If you choose to use an internal source port, the load balancer’s listening port&nbsp;will not be published to the host.</p>
+<p>&nbsp;</p>
+<p><a href="http://cdn.rancher.com/wp-content/uploads/2015/07/31151759/internal.png"><img class="alignnone size-large wp-image-2242" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/internal-1024x636.png" alt="internal" width="1024" height="636"></a></p>
+<p>&nbsp;</p>
+<h3>More LB stuff coming soon</h3>
+<p>I hope this walk-through helps you understand the latest work we’ve been&nbsp;doing to make our Docker&nbsp;load balancing functionality more useful. As usual, I’ll close by giving you a preview of&nbsp;what we’re working on next for the load balancer.&nbsp;&nbsp;In the next couple of weeks you should see us enable&nbsp;support for SSL termination to the load balancer. Also, as always, an enormous thank you&nbsp;to the amazing team that works on <a href="http://www.haproxy.org/" onclick="__gaTracker(&#39;send&#39;, &#39;event&#39;, &#39;outbound-article&#39;, &#39;http://www.haproxy.org/&#39;, &#39;HAproxy&#39;);" target="_blank">HAproxy</a>, which we use to build our Rancher load balancing services.</p>
+<p>Please join our August&nbsp;online meetup to learn more about how we use Rancher in our internal CI process. We’ll also talk about some of the new features in Rancher, and our&nbsp;road map including service discovery and load balancing:</p><p><span id="hs-cta-wrapper-fec158c0-1df5-4fbd-9ff6-ffcd3c0acd02" class="hs-cta-wrapper"><span id="hs-cta-fec158c0-1df5-4fbd-9ff6-ffcd3c0acd02" class="hs-cta-node hs-cta-fec158c0-1df5-4fbd-9ff6-ffcd3c0acd02" style="visibility: visible;" data-hs-drop="true"><a id="cta_button_468859_8cf87b05-c26a-43ff-b5b4-efffd7991fd3" class="cta_button " href="http://cta-service-cms2.hubspot.com/ctas/v2/public/cs/c/?cta_guid=8cf87b05-c26a-43ff-b5b4-efffd7991fd3&amp;placement_guid=fec158c0-1df5-4fbd-9ff6-ffcd3c0acd02&amp;portal_id=468859&amp;redirect_url=APefjpFKX9hOWsngbKxLw5LNWOINUPbiL_Fnet9ffqRqTS-zt5yTo-egLXYcd8O9wWyxPrQ5NrbsCQ-IYfINuxWE4N-5tKYqFVVqwYFlbeGj1pOK8A0kDzqKSDkWEsRfoC9Q53SQYRE4PFWnXnC5mtg36NYEsBJL5FxVQzU4gRMsPIozJxdiy5_XwzB1wZoPZa9UYWfL0TMN1levtTBG9C3lrB8dr943iIW0CZwutrM-8AjwaDXXRpOSzESXwOwhCf3jYhqdKp8LA8X3neN1xRDUJH5MsvFmTeFDSoEqLQNSsvxOVW9E2sw&amp;hsutk=ab876be5572747b4da56f9f596307d5e&amp;utm_referrer=http%3A%2F%2Francher.com%2Fvirtual-host-routing-using-rancher-load-balancer%2F&amp;canon=http%3A%2F%2Francher.com%2Fvirtual-host-routing-using-rancher-load-balancer%2F&amp;__hsfp=1953468845" target="_blank" style="" cta_dest_link="http://info.rancher.com/april-2016-online-meetup" title="REGISTER NOW"> <span style="font-size: 14px;">REGISTER NOW</span> </a> </span><br>
+<script src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/current.js" charset="utf-8"></script><script type="text/javascript">// <![CDATA[
+hbspt.cta.load(468859, 'fec158c0-1df5-4fbd-9ff6-ffcd3c0acd02');
+// ]]&gt;</script><br>
+</span><br>
+<!-- end HubSpot Call-to-Action Code --></p>
+Please also consider joining our <a href="http://info.rancher.com/beta" target="_blank">beta </a>to get some help getting started with Rancher.<p></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><a href="http://cdn.rancher.com/wp-content/uploads/2015/04/21135821/Avatar.png"><img class="alignleft wp-image-1302 size-thumbnail" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/Avatar-150x150.png" alt="Avatar" width="150" height="150"></a></p>
+<p>Alena Prokharchyk</p>
+<p>If you have any questions or feedback, please contact me on twitter: @lemonjet</p>
+<p>https://github.com/alena1108</p>
+<h4></h4>
+<div class="addtoany_share_save_container addtoany_content_bottom"><div class="a2a_kit a2a_kit_size_24 addtoany_list a2a_target" id="" style="line-height: 24px;"><a href="http://rancher.com/#twitter" onclick="__gaTracker(&#39;send&#39;, &#39;event&#39;, &#39;outbound-article&#39;, &#39;http://www.addtoany.com/add_to/twitter?linkurl=http%3A%2F%2Francher.com%2Fvirtual-host-routing-using-rancher-load-balancer%2F&amp;linkname=Virtual%20Host%20Routing%20for%20Docker%20using%20Rancher%20Load%20Balancer&#39;, &#39;&#39;);" class="a2a_button_twitter" title="Twitter" rel="nofollow" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_twitter" style="width: 24px; line-height: 24px; height: 24px; border-radius: 3px; background-size: 24px;"></span><span class="a2a_label">Twitter</span></a><a href="http://rancher.com/#hacker_news" onclick="__gaTracker(&#39;send&#39;, &#39;event&#39;, &#39;outbound-article&#39;, &#39;http://www.addtoany.com/add_to/hacker_news?linkurl=http%3A%2F%2Francher.com%2Fvirtual-host-routing-using-rancher-load-balancer%2F&amp;linkname=Virtual%20Host%20Routing%20for%20Docker%20using%20Rancher%20Load%20Balancer&#39;, &#39;&#39;);" class="a2a_button_hacker_news" title="Hacker News" rel="nofollow" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_y18" style="width: 24px; line-height: 24px; height: 24px; border-radius: 3px; background-size: 24px;"></span><span class="a2a_label">Hacker News</span></a><a href="http://rancher.com/#linkedin" onclick="__gaTracker(&#39;send&#39;, &#39;event&#39;, &#39;outbound-article&#39;, &#39;http://www.addtoany.com/add_to/linkedin?linkurl=http%3A%2F%2Francher.com%2Fvirtual-host-routing-using-rancher-load-balancer%2F&amp;linkname=Virtual%20Host%20Routing%20for%20Docker%20using%20Rancher%20Load%20Balancer&#39;, &#39;&#39;);" class="a2a_button_linkedin" title="LinkedIn" rel="nofollow" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_linkedin" style="width: 24px; line-height: 24px; height: 24px; border-radius: 3px; background-size: 24px;"></span><span class="a2a_label">LinkedIn</span></a><a href="http://rancher.com/#google_plus" onclick="__gaTracker(&#39;send&#39;, &#39;event&#39;, &#39;outbound-article&#39;, &#39;http://www.addtoany.com/add_to/google_plus?linkurl=http%3A%2F%2Francher.com%2Fvirtual-host-routing-using-rancher-load-balancer%2F&amp;linkname=Virtual%20Host%20Routing%20for%20Docker%20using%20Rancher%20Load%20Balancer&#39;, &#39;&#39;);" class="a2a_button_google_plus" title="Google+" rel="nofollow" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_google_plus" style="width: 24px; line-height: 24px; height: 24px; border-radius: 3px; background-size: 24px;"></span><span class="a2a_label">Google+</span></a><a href="http://rancher.com/#reddit" onclick="__gaTracker(&#39;send&#39;, &#39;event&#39;, &#39;outbound-article&#39;, &#39;http://www.addtoany.com/add_to/reddit?linkurl=http%3A%2F%2Francher.com%2Fvirtual-host-routing-using-rancher-load-balancer%2F&amp;linkname=Virtual%20Host%20Routing%20for%20Docker%20using%20Rancher%20Load%20Balancer&#39;, &#39;&#39;);" class="a2a_button_reddit" title="Reddit" rel="nofollow" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_reddit" style="width: 24px; line-height: 24px; height: 24px; border-radius: 3px; background-size: 24px;"></span><span class="a2a_label">Reddit</span></a><a href="http://rancher.com/#facebook" onclick="__gaTracker(&#39;send&#39;, &#39;event&#39;, &#39;outbound-article&#39;, &#39;http://www.addtoany.com/add_to/facebook?linkurl=http%3A%2F%2Francher.com%2Fvirtual-host-routing-using-rancher-load-balancer%2F&amp;linkname=Virtual%20Host%20Routing%20for%20Docker%20using%20Rancher%20Load%20Balancer&#39;, &#39;&#39;);" class="a2a_button_facebook" title="Facebook" rel="nofollow" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_facebook" style="width: 24px; line-height: 24px; height: 24px; border-radius: 3px; background-size: 24px;"></span><span class="a2a_label">Facebook</span></a>
+<script type="text/javascript"><!--
+wpa2a.script_load();
+//--></script>
+</div></div>								
+															</div><!-- the-content -->
+								
+							<div class="meta clearfix">
+								<div class="tags">
+									<p>
+										Tags: 
+										<a href="http://rancher.com/tag/container-service/" rel="tag">container service</a>,<a href="http://rancher.com/tag/docker-compose/" rel="tag">docker compose</a>,<a href="http://rancher.com/tag/docker-load-balancing/" rel="tag">Docker Load Balancing</a>,<a href="http://rancher.com/tag/docker-management/" rel="tag">Docker Management</a>,<a href="http://rancher.com/tag/docker-networking/" rel="tag">Docker Networking</a>,<a href="http://rancher.com/tag/docker-orchestration/" rel="tag">Docker Orchestration</a>,<a href="http://rancher.com/tag/tutorials/" rel="tag">Tutorial</a>									</p>
+								</div>
+							</div><!-- Meta -->
+								
+											
+							<div id="comments" class="comments-area">
+
+      <p class="no-comments">Comments are closed.</p>
+  
+    
+  
+      <h4 class="comments-title">
+      8 comments on “Virtual Host Routing for Docker using Rancher Load Balancer”    </h4>
+
+
+
+    
+    <ul class="list-unstyled">
+                <li class="comment even thread-even depth-1">
+              <div id="comment-724" class="comment-body">
+                  <div class="comment-avatar col-xs-2">
+              <img alt="" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/df70e36f7aed2a1ef54276a261048fd9" srcset="http://1.gravatar.com/avatar/df70e36f7aed2a1ef54276a261048fd9?s=120&amp;d=mm&amp;r=g 2x" class="avatar avatar-60 photo center-block" height="60" width="60">                  </div>
+                  <div class="comment-content col-xs-10">
+                      <div class="comment-author col-xs-12">
+              Marcelo Aguero                       </div>
+                      <div class="comment-meta col-xs-12">
+              August 1, 2015 at 6:16 am                      </div>
+                      <div class="comment-text col-xs-12">
+                            <p>Wonderful functionality. I’m very impressed with the progress being made so far.</p>
+<p>In the future, could you expand the explanation of the stickiness policies using examples, please? for example, how to use an existing cookie in the application, how to create a new cookie, etc.</p>
+<p>Thank You!</p>
+                      </div>
+                                </div>
+              </div>
+              <ul class="children">
+          <li class="comment byuser comment-author-alena bypostauthor odd alt depth-2">
+              <div id="comment-1232" class="comment-body">
+                  <div class="comment-avatar col-xs-2">
+              <img alt="" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/98af8c712aa28362354803cdb101b09e" srcset="http://0.gravatar.com/avatar/98af8c712aa28362354803cdb101b09e?s=120&amp;d=mm&amp;r=g 2x" class="avatar avatar-60 photo center-block" height="60" width="60">                  </div>
+                  <div class="comment-content col-xs-10">
+                      <div class="comment-author col-xs-12">
+              Alena Prokharchyk                       </div>
+                      <div class="comment-meta col-xs-12">
+              November 5, 2015 at 11:17 am                      </div>
+                      <div class="comment-text col-xs-12">
+                            <p>Sure, Marcelo, you can also file an enhancement request on <a href="https://github.com/rancher/rancher/issues" onclick="__gaTracker(&#39;send&#39;, &#39;event&#39;, &#39;outbound-comment&#39;, &#39;https://github.com/rancher/rancher/issues&#39;, &#39;https://github.com/rancher/rancher/issues&#39;);" rel="nofollow">https://github.com/rancher/rancher/issues</a> for the doc component if you feel that stickiness policies need more extensive documentation. For now, you can refer to these 2 links for more details:</p>
+<p><a href="https://cbonte.github.io/haproxy-dconv/configuration-1.4.html#4.2-cookie" onclick="__gaTracker(&#39;send&#39;, &#39;event&#39;, &#39;outbound-comment&#39;, &#39;https://cbonte.github.io/haproxy-dconv/configuration-1.4.html#4.2-cookie&#39;, &#39;https://cbonte.github.io/haproxy-dconv/configuration-1.4.html#4.2-cookie&#39;);" rel="nofollow">https://cbonte.github.io/haproxy-dconv/configuration-1.4.html#4.2-cookie</a><br>
+<a href="https://cbonte.github.io/haproxy-dconv/configuration-1.4.html#4.2-appsession" onclick="__gaTracker(&#39;send&#39;, &#39;event&#39;, &#39;outbound-comment&#39;, &#39;https://cbonte.github.io/haproxy-dconv/configuration-1.4.html#4.2-appsession&#39;, &#39;https://cbonte.github.io/haproxy-dconv/configuration-1.4.html#4.2-appsession&#39;);" rel="nofollow">https://cbonte.github.io/haproxy-dconv/configuration-1.4.html#4.2-appsession</a></p>
+                      </div>
+                                </div>
+              </div>
+              </li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+          <li class="comment even thread-odd thread-alt depth-1">
+              <div id="comment-735" class="comment-body">
+                  <div class="comment-avatar col-xs-2">
+              <img alt="" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/31d57621e245a0668eda2c43c7d3eb45" srcset="http://0.gravatar.com/avatar/31d57621e245a0668eda2c43c7d3eb45?s=120&amp;d=mm&amp;r=g 2x" class="avatar avatar-60 photo center-block" height="60" width="60">                  </div>
+                  <div class="comment-content col-xs-10">
+                      <div class="comment-author col-xs-12">
+              ka2er                       </div>
+                      <div class="comment-meta col-xs-12">
+              August 6, 2015 at 12:54 am                      </div>
+                      <div class="comment-text col-xs-12">
+                            <p>Thanks for this feature ! I’ve been for it for a long time … I’ll test it ASAP</p>
+                      </div>
+                                </div>
+              </div>
+              <ul class="children">
+          <li class="comment byuser comment-author-alena bypostauthor odd alt depth-2">
+              <div id="comment-1235" class="comment-body">
+                  <div class="comment-avatar col-xs-2">
+              <img alt="" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/98af8c712aa28362354803cdb101b09e" srcset="http://0.gravatar.com/avatar/98af8c712aa28362354803cdb101b09e?s=120&amp;d=mm&amp;r=g 2x" class="avatar avatar-60 photo center-block" height="60" width="60">                  </div>
+                  <div class="comment-content col-xs-10">
+                      <div class="comment-author col-xs-12">
+              Alena Prokharchyk                       </div>
+                      <div class="comment-meta col-xs-12">
+              November 5, 2015 at 11:19 am                      </div>
+                      <div class="comment-text col-xs-12">
+                            <p>Thank you for testing it, please let us know if you hit any issues (you can file them on <a href="https://github.com/rancher/rancher/issues" onclick="__gaTracker(&#39;send&#39;, &#39;event&#39;, &#39;outbound-comment&#39;, &#39;https://github.com/rancher/rancher/issues&#39;, &#39;https://github.com/rancher/rancher/issues&#39;);" rel="nofollow">https://github.com/rancher/rancher/issues</a>)</p>
+                      </div>
+                                </div>
+              </div>
+              </li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+          <li class="comment even thread-even depth-1">
+              <div id="comment-737" class="comment-body">
+                  <div class="comment-avatar col-xs-2">
+              <img alt="" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/a4366152faf94caa4ffb449f337a1cd0" srcset="http://1.gravatar.com/avatar/a4366152faf94caa4ffb449f337a1cd0?s=120&amp;d=mm&amp;r=g 2x" class="avatar avatar-60 photo center-block" height="60" width="60">                  </div>
+                  <div class="comment-content col-xs-10">
+                      <div class="comment-author col-xs-12">
+              Jason Huang                       </div>
+                      <div class="comment-meta col-xs-12">
+              August 6, 2015 at 6:30 am                      </div>
+                      <div class="comment-text col-xs-12">
+                            <p>This kind of simple load balance feels like fit the internal usage. For request comes from internet, nginx is commonly used because operator need to add complex rules for access control, caching, defending etc…</p>
+                      </div>
+                                </div>
+              </div>
+              <ul class="children">
+          <li class="comment byuser comment-author-alena bypostauthor odd alt depth-2">
+              <div id="comment-1234" class="comment-body">
+                  <div class="comment-avatar col-xs-2">
+              <img alt="" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/98af8c712aa28362354803cdb101b09e" srcset="http://0.gravatar.com/avatar/98af8c712aa28362354803cdb101b09e?s=120&amp;d=mm&amp;r=g 2x" class="avatar avatar-60 photo center-block" height="60" width="60">                  </div>
+                  <div class="comment-content col-xs-10">
+                      <div class="comment-author col-xs-12">
+              Alena Prokharchyk                       </div>
+                      <div class="comment-meta col-xs-12">
+              November 5, 2015 at 11:19 am                      </div>
+                      <div class="comment-text col-xs-12">
+                            <p>Glad to hear you like the feature, Jason.</p>
+                      </div>
+                                </div>
+              </div>
+              </li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+          <li class="comment even thread-odd thread-alt depth-1">
+              <div id="comment-987" class="comment-body">
+                  <div class="comment-avatar col-xs-2">
+              <img alt="" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/0b28870db19a933f85f0f838a7fa64cc" srcset="http://0.gravatar.com/avatar/0b28870db19a933f85f0f838a7fa64cc?s=120&amp;d=mm&amp;r=g 2x" class="avatar avatar-60 photo center-block" height="60" width="60">                  </div>
+                  <div class="comment-content col-xs-10">
+                      <div class="comment-author col-xs-12">
+              Florian                       </div>
+                      <div class="comment-meta col-xs-12">
+              October 8, 2015 at 4:17 am                      </div>
+                      <div class="comment-text col-xs-12">
+                            <p>Hi Alena,</p>
+<p>First of all, sorry for my bad english skills <img src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/simple-smile.png" alt=":)" class="wp-smiley" style="height: 1em; max-height: 1em;"></p>
+<p>Thank you for that very nice feature.</p>
+<p>I have a quastion about the Multi-Host Networking things. Actually you’re realising the multi-host networks with a udp vpn tunnel.. I hope i understood that correct.</p>
+<p>I made two tests:</p>
+<p>1. 1 x nginx manually started on a docker host.<br>
+2. 1 x nginx started via rancher UI with a loadbalancer in front</p>
+<p>Now i started a download of an 2GB File.</p>
+<p>In the 2nd Testcase i loose abound 20% of my bandwidth…</p>
+<p>Is this normal?<br>
+Will there be an update or a change in the multi-host networking, so we don’t loose so much bandwidth?</p>
+<p>Regards,<br>
+Florian</p>
+                      </div>
+                                </div>
+              </div>
+              <ul class="children">
+          <li class="comment byuser comment-author-alena bypostauthor odd alt depth-2">
+              <div id="comment-1233" class="comment-body">
+                  <div class="comment-avatar col-xs-2">
+              <img alt="" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/98af8c712aa28362354803cdb101b09e" srcset="http://0.gravatar.com/avatar/98af8c712aa28362354803cdb101b09e?s=120&amp;d=mm&amp;r=g 2x" class="avatar avatar-60 photo center-block" height="60" width="60">                  </div>
+                  <div class="comment-content col-xs-10">
+                      <div class="comment-author col-xs-12">
+              Alena Prokharchyk                       </div>
+                      <div class="comment-meta col-xs-12">
+              November 5, 2015 at 11:18 am                      </div>
+                      <div class="comment-text col-xs-12">
+                            <p>You english is more than fine, Florian <img src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/simple-smile.png" alt=":)" class="wp-smiley" style="height: 1em; max-height: 1em;"> I do believe we followed up on your issue on <a href="http://forums.rancher.com/" rel="nofollow">http://forums.rancher.com/</a>? If not, please start a new thread there, and thank you for the performance testing you’ve don for Rancher.</p>
+                      </div>
+                                </div>
+              </div>
+              </li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+<!-- .comment-list -->
+    </ul>
+
+
+  
+
+</div><!-- .comments-area -->
+
+									</div>
+
+				<div class="col-sm-4 col-xs-12 rnchr-left-sidebar">
+	        			    <div class="bottom-spacer widget">    <h4><a href="http://rancher.com/blog">Recent Posts</a></h4><hr>    <ul class="list-unstyled">
+              <li>
+          <a href="http://rancher.com/creating-a-mongodb-replicaset-with-the-rancher-kubernetes-catalog/">Creating a MongoDB Replicaset with the Rancher Kubernetes Catalog</a>
+                </li>
+              <li>
+          <a href="http://rancher.com/lessons-learned-building-a-continuous-deployment-pipeline-with-docker-docker-compose-and-rancher-part-2/">Lessons learned building a continuous deployment pipeline with Docker, Docker-Compose and Rancher (Part 2)</a>
+                </li>
+              <li>
+          <a href="http://rancher.com/deploying-gocd-using-docker-compose-on-rancher/">Deploying GoCD using Docker Compose on Rancher</a>
+                </li>
+              <li>
+          <a href="http://rancher.com/lessons-learned-building-a-deployment-pipeline-with-docker-docker-compose-and-rancher-part-1/">Lessons Learned Building a Deployment Pipeline with Docker, Docker-Compose, and Rancher (Part 1)</a>
+                </li>
+              <li>
+          <a href="http://rancher.com/recording-march-2016-online-meetup-building-containers-as-a-service/">Recording: March 2016 Online Meetup: Building Containers-as-a-Service</a>
+                </li>
+          </ul>
+    </div>            <div class="bottom-spacer widget">            <h4><a href="http://rancher.com/events">Upcoming Events</a></h4><hr>            <ul class="list-unstyled">
+                                                            <li>
+                            <div class="row bottom-spacer">
+                                
+                                <div class="col-xs-4">
+                                    <img class="img-responsive" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/OSCON_logo.gif">
+                                </div>
+                                <div class="col-xs-8">
+                                    <a href="http://rancher.com/event/oscon-2016/">OSCON 2016</a>
+                                </div>
+                            </div>
+                        </li>
+                                                                                <li>
+                            <div class="row bottom-spacer">
+                                
+                                <div class="col-xs-4">
+                                    <img class="img-responsive" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/DevOps-logo.png">
+                                </div>
+                                <div class="col-xs-8">
+                                    <a href="http://rancher.com/event/devops-days-austin-2016/">DevOps Days Austin 2016</a>
+                                </div>
+                            </div>
+                        </li>
+                                                                                <li>
+                            <div class="row bottom-spacer">
+                                
+                                <div class="col-xs-4">
+                                    <img class="img-responsive" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/logo_emc_main.jpg">
+                                </div>
+                                <div class="col-xs-8">
+                                    <a href="http://rancher.com/event/emc-world-2016/">EMC World 2016</a>
+                                </div>
+                            </div>
+                        </li>
+                                                                                                                        </ul>
+            </div>            	      </div>
+			</div>
+      
+		</div>
+	</div>
+	
+</div>
+
+
+
+<div class="bg-lightGrayTwo rnchr-footer color-gray-darker">
+  <div class="container">
+    <div class="row top-spacer bottom-spacer">
+      <div class="col-sm-2">
+        <h5>Rancher.com</h5>
+         <div class="menu-footer-container"><ul id="menu-footer" class="menu"><li id="menu-item-1722" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1722"><a href="http://rancher.com/rancher-os/">RancherOS</a></li>
+<li id="menu-item-1723" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1723"><a href="http://rancher.com/rancher/">Rancher</a></li>
+<li id="menu-item-1721" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1721"><a href="http://rancher.com/events/">Events</a></li>
+<li id="menu-item-3414" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3414"><a href="http://rancher.com/learn/">Learn Rancher</a></li>
+<li id="menu-item-1726" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1726"><a href="http://rancher.com/blog/">Blog</a></li>
+<li id="menu-item-1725" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1725"><a href="http://rancher.com/careers/">Careers</a></li>
+<li id="menu-item-1724" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1724"><a href="http://rancher.com/about/">About</a></li>
+<li id="menu-item-2424" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-2424"><a href="http://forums.rancher.com/">Forums</a></li>
+<li id="menu-item-2058" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-2058"><a href="http://rancher.com/privacy/">Privacy</a></li>
+</ul></div>      </div>
+
+      <div class="col-sm-4">
+        <h5>Get the latest Rancher News</h5>
+        <div class="rnchr-hbspt-form">
+          <!--[if lte IE 8]>
+          <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/v2-legacy.js"></script>
+          <![endif]-->
+          <script charset="utf-8" type="text/javascript" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/v2.js"></script>
+          <script>
+            hbspt.forms.create({ 
+              css: '',
+              portalId: '468859',
+              formId: '8beed251-ecf0-49fc-93a1-fa9b1446110f'
+            });
+          </script><div class="hbspt-form" id="hbspt-form-1461941696313"><form novalidate="" accept-charset="UTF-8" action="https://forms.hubspot.com/uploads/form/v2/468859/8beed251-ecf0-49fc-93a1-fa9b1446110f" enctype="multipart/form-data" id="hsForm_8beed251-ecf0-49fc-93a1-fa9b1446110f" method="POST" class="hs-form stacked" data-form-id="8beed251-ecf0-49fc-93a1-fa9b1446110f" data-reactid=".0"><div data-reactid=".0.1:$0"><div class="hs_email field hs-form-field" data-reactid=".0.1:$0.$email"><label class="" placeholder="Enter your Email" for="email-8beed251-ecf0-49fc-93a1-fa9b1446110f" data-reactid=".0.1:$0.$email.0"><span data-reactid=".0.1:$0.$email.0.0">Email</span><span class="hs-form-required" data-reactid=".0.1:$0.$email.0.1">*</span></label><legend class="hs-field-desc" style="display:none;" data-reactid=".0.1:$0.$email.1"></legend><div class="input" data-reactid=".0.1:$0.$email.$email"><input id="email-8beed251-ecf0-49fc-93a1-fa9b1446110f" class="hs-input" type="email" name="email" required="" placeholder="" value="mail@rafaelferreira.pt" data-reactid=".0.1:$0.$email.$email.0"></div></div></div><div class="hs_submit" data-reactid=".0.3"><div class="hs-field-desc" style="display:none;" data-reactid=".0.3.0"></div><div class="actions" data-reactid=".0.3.1"><input type="submit" value="Submit" class="hs-button primary large" data-reactid=".0.3.1.0"></div></div><input name="hs_context" type="hidden" value="{&quot;pageUrl&quot;:&quot;http://rancher.com/virtual-host-routing-using-rancher-load-balancer/&quot;,&quot;pageTitle&quot;:&quot;Rancher Labs | Virtual Host Routing for Docker using Rancher Load Balancer | Rancher Labs&quot;,&quot;isHostedOnHubspot&quot;:false,&quot;timestamp&quot;:1461941696301,&quot;userAgent&quot;:&quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.86 Safari/537.36&quot;,&quot;referrer&quot;:&quot;https://www.google.pt/&quot;,&quot;hutk&quot;:&quot;ab876be5572747b4da56f9f596307d5e&quot;,&quot;originalEmbedContext&quot;:{&quot;css&quot;:&quot;&quot;,&quot;portalId&quot;:&quot;468859&quot;,&quot;formId&quot;:&quot;8beed251-ecf0-49fc-93a1-fa9b1446110f&quot;,&quot;target&quot;:&quot;#hbspt-form-1461941696313&quot;},&quot;formName&quot;:&quot;Subscribe to Rancher News&quot;,&quot;recentFieldsCookie&quot;:{},&quot;boolCheckBoxFields&quot;:&quot;&quot;,&quot;dateFields&quot;:&quot;&quot;,&quot;smartFields&quot;:{},&quot;urlParams&quot;:{},&quot;formValidity&quot;:{}}" data-reactid=".0.4"></form></div>
+        </div>
+      </div>
+
+      <div class="col-sm-3">
+        <h5>Recent Posts</h5>
+        <ul class="list-unstyled">
+
+          <li><a href="http://rancher.com/creating-a-mongodb-replicaset-with-the-rancher-kubernetes-catalog/">Creating a MongoDB Replicaset with the Rancher Kubernetes Catalog</a></li><li><a href="http://rancher.com/lessons-learned-building-a-continuous-deployment-pipeline-with-docker-docker-compose-and-rancher-part-2/">Lessons learned building a continuous deployment pipeline with Docker, Docker-Compose and Rancher (Part 2)</a></li><li><a href="http://rancher.com/deploying-gocd-using-docker-compose-on-rancher/">Deploying GoCD using Docker Compose on Rancher</a></li><li><a href="http://rancher.com/lessons-learned-building-a-deployment-pipeline-with-docker-docker-compose-and-rancher-part-1/">Lessons Learned Building a Deployment Pipeline with Docker, Docker-Compose, and Rancher (Part 1)</a></li><li><a href="http://rancher.com/recording-march-2016-online-meetup-building-containers-as-a-service/">Recording: March 2016 Online Meetup: Building Containers-as-a-Service</a></li>        </ul>
+      </div>
+      <div class="col-sm-3">
+        <h5>Upcoming Events</h5>
+				
+				<ul class="list-unstyled">
+	        <li><a href="http://rancher.com/event/oscon-2016/">OSCON 2016</a></li><li><a href="http://rancher.com/event/devops-days-austin-2016/">DevOps Days Austin 2016</a></li>	      </ul>
+        
+      </div>
+    </div> <!-- /.row -->
+
+    <div class="row">
+      <div class="col-xs-12">
+        <hr>
+      </div>
+      <div class="col-xs-12 col-md-8">
+        <ul id="menu-footer-1" class="list-inline"><li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1722"><a title="RancherOS" href="http://rancher.com/rancher-os/">RancherOS</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1723"><a title="Rancher" href="http://rancher.com/rancher/">Rancher</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1721"><a title="Events" href="http://rancher.com/events/">Events</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3414"><a title="Learn Rancher" href="http://rancher.com/learn/">Learn Rancher</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1726"><a title="Blog" href="http://rancher.com/blog/">Blog</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1725"><a title="Careers" href="http://rancher.com/careers/">Careers</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1724"><a title="About" href="http://rancher.com/about/">About</a></li>
+<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-2424"><a title="Forums" href="http://forums.rancher.com/">Forums</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-2058"><a title="Privacy" href="http://rancher.com/privacy/">Privacy</a></li>
+</ul>      </div>
+      <div class="col-xs-12 col-md-4 text-right">
+        Copyright © 2016 Rancher Labs. All Rights Reserved.
+      </div>
+    </div>
+  </div><!-- /.container -->
+</div> <!-- /.bg-white -->
+
+
+<script type="text/javascript"><!--
+wpa2a.targets=[
+{title:'Virtual Host Routing for Docker using Rancher Load Balancer',url:'http://rancher.com/virtual-host-routing-using-rancher-load-balancer/'}];
+wpa2a.html_done=true;if(wpa2a.script_ready&&!wpa2a.done)wpa2a.init();wpa2a.script_load();
+//--></script>
+
+<!-- Start of Async HubSpot Analytics Code for WordPress v1.9.4 -->
+<script type="text/javascript">
+var _hsq = _hsq || [];
+_hsq.push(["setContentType", "blog-post"]);
+(function(d,s,i,r) {
+  if (d.getElementById(i)){return;}
+  var n = d.createElement(s),e = document.getElementsByTagName(s)[0];
+  n.id=i;n.src = '//js.hs-analytics.net/analytics/'+(Math.ceil(new Date()/r)*r)+'/468859.js';
+  e.parentNode.insertBefore(n, e);
+})(document, "script", "hs-analytics", 300000);
+</script>
+<!-- End of Async HubSpot Analytics Code -->
+<script type="text/javascript" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/jquery.form.min.js"></script>
+<script type="text/javascript">
+/* <![CDATA[ */
+var _wpcf7 = {"loaderUrl":"http:\/\/rancher.com\/wp-content\/plugins\/contact-form-7\/images\/ajax-loader.gif","sending":"Sending ..."};
+/* ]]> */
+</script>
+<script type="text/javascript" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/scripts.js"></script>
+<script type="text/javascript">
+/* <![CDATA[ */
+var tocplus = {"visibility_show":"show","visibility_hide":"hide","width":"Auto"};
+/* ]]> */
+</script>
+<script type="text/javascript" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/front.min.js"></script>
+<script type="text/javascript" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/wp-embed.min.js"></script>
+
+<script type="text/javascript">/* <![CDATA[ */(function(d,s,a,i,j,r,l,m,t){try{l=d.getElementsByTagName('a');t=d.createElement('textarea');for(i=0;l.length-i;i++){try{a=l[i].href;s=a.indexOf('/cdn-cgi/l/email-protection');m=a.length;if(a&&s>-1&&m>28){j=28+s;s='';if(j<m){r='0x'+a.substr(j,2)|0;for(j+=2;j<m&&a.charAt(j)!='X';j+=2)s+='%'+('0'+('0x'+a.substr(j,2)^r).toString(16)).slice(-2);j++;s=decodeURIComponent(s)+a.substr(j,m-j)}t.innerHTML=s.replace(/</g,'&lt;').replace(/>/g,'&gt;');l[i].href='mailto:'+t.value}}catch(e){}}}catch(e){}})(document);/* ]]> */</script>
+
+<script charset="UTF-8" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/pt-PT.js"></script><div class="rdr-notifier"> <div class="rdr-container"> <div class="rdr-close-icon"></div> <div class="rdr-time"><span class="rdr-min"></span><div class="rdr-sub"> READ TIME </div> </div> </div></div><div style="position: static;"><div class="a2a_overlay" id="a2apage_overlay"></div><div class="a2a_menu a2a_full" id="a2apage_full" role="dialog" tabindex="-1" aria-label="Partilhar"><div class="a2a_full_header"><div id="a2apage_find_container" class="a2a_menu_find_container"><input id="a2apage_find" class="a2a_menu_find" type="text" onclick="a2a.focus_find()" onkeyup="a2a.do_find()" autocomplete="off" title="Procurar serviço a adicionar a"><span id="a2apage_find_icon" class="a2a_svg a2a_s_find" onclick="a2a.focus_find()"><svg focusable="false" xmlns="http://www.w3.org/2000/svg" version="1.1" x="0" y="0" width="24" height="24" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve"><path fill="#CCCCCC" d="M19.7 18.2l-4.5-4.5c0.7-1.1 1.2-2.3 1.2-3.6 0-3.5-2.8-6.3-6.3-6.3 -3.5 0-6.3 2.8-6.3 6.3 0 3.5 2.8 6.3 6.3 6.3 1.4 0 2.6-0.4 3.6-1.2l4.5 4.5c0.6 0.6 1.3 0.7 1.7 0.2C20.4 19.5 20.3 18.8 19.7 18.2zM10.1 14.6c-2.5 0-4.5-2.1-4.5-4.5 0-2.5 2.1-4.5 4.5-4.5 2.5 0 4.5 2.1 4.5 4.5C14.6 12.5 12.6 14.6 10.1 14.6z"></path></svg></span></div></div><div class="a2a_full_services" id="a2apage_full_services" role="presentation"><a rel="nofollow" class="a2a_i" href="http://rancher.com/#facebook" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_facebook"></span>Facebook </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#twitter" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_twitter"></span>Twitter </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#google_plus" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_google_plus"></span>Google+ </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#pinterest" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_pinterest"></span>Pinterest </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#email" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_email"></span>Email </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#linkedin" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_linkedin"></span>LinkedIn </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#reddit" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_reddit"></span>Reddit </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#tumblr" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_tumblr"></span>Tumblr </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#wordpress" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_wordpress"></span>WordPress </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#google_gmail" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_gmail"></span>Google Gmail </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#whatsapp" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_whatsapp"></span>WhatsApp </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#stumbleupon" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_stumbleupon"></span>StumbleUpon </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#aim" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_aim"></span>AIM </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#amazon_wish_list" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_amazon"></span>Amazon Wish List </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#aol_mail" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_aol"></span>AOL Mail </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#app_net" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_app_net"></span>App.net </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#baidu" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_baidu"></span>Baidu </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#balatarin" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_balatarin"></span>Balatarin </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#bibsonomy" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_bibsonomy"></span>BibSonomy </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#bitty_browser" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_bitty"></span>Bitty Browser </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#blinklist" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_blinklist"></span>Blinklist </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#blogger_post" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_blogger"></span>Blogger Post </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#blogmarks" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_blogmarks"></span>BlogMarks </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#bookmarks_fr" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_bookmarks_fr"></span>Bookmarks.fr </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#box_net" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_box"></span>Box.net </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#buddymarks" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_buddymarks"></span>BuddyMarks </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#buffer" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_buffer"></span>Buffer </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#care2_news" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_care2"></span>Care2 News </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#citeulike" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_citeulike"></span>CiteULike </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#delicious" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_delicious"></span>Delicious </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#design_float" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_designfloat"></span>Design Float </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#diary_ru" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_diary_ru"></span>Diary.Ru </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#diaspora" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_diaspora"></span>Diaspora </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#digg" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_digg"></span>Digg </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#dihitt" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_dihitt"></span>diHITT </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#diigo" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_diigo"></span>Diigo </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#dzone" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_dzone"></span>DZone </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#evernote" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_evernote"></span>Evernote </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#fark" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_fark"></span>Fark </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#flipboard" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_flipboard"></span>Flipboard </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#folkd" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_folkd"></span>Folkd </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#google_bookmarks" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_google"></span>Google Bookmarks </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#google_classroom" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_google_classroom"></span>Google Classroom </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#hacker_news" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_y18"></span>Hacker News </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#hatena" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_hatena"></span>Hatena </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#instapaper" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_instapaper"></span>Instapaper </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#jamespot" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_jamespot"></span>Jamespot </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#kakao" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_kakao"></span>Kakao </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#kik" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_kik"></span>Kik </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#kindle_it" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_kindle"></span>Kindle It </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#known" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_known"></span>Known </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#line" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_line"></span>Line </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#livejournal" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_livejournal"></span>LiveJournal </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#mail_ru" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_mail_ru"></span>Mail.Ru </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#mendeley" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_mendeley"></span>Mendeley </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#meneame" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_meneame"></span>Meneame </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#mixi" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_mixi"></span>Mixi </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#myspace" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_myspace"></span>MySpace </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#netlog" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_netlog"></span>Netlog </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#netvouz" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_netvouz"></span>Netvouz </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#newsvine" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_newsvine"></span>NewsVine </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#nujij" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_nujij"></span>NUjij </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#odnoklassniki" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_odnoklassniki"></span>Odnoklassniki </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#oknotizie" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_oknotizie"></span>Oknotizie </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#outlook_com" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_outlook_com"></span>Outlook.com </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#pinboard" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_pinboard"></span>Pinboard </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#plurk" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_plurk"></span>Plurk </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#pocket" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_pocket"></span>Pocket </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#print" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_print"></span>Print </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#printfriendly" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_printfriendly"></span>PrintFriendly </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#protopage_bookmarks" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_protopage"></span>Protopage Bookmarks </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#pusha" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_pusha"></span>Pusha </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#qzone" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_qzone"></span>Qzone </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#rediff" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_rediff"></span>Rediff MyPage </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#renren" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_renren"></span>Renren </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#segnalo" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_segnalo"></span>Segnalo </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#sina_weibo" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_sina_weibo"></span>Sina Weibo </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#sitejot" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_sitejot"></span>SiteJot </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#skype" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_skype"></span>Skype </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#slashdot" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_slashdot"></span>Slashdot </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#sms" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_sms"></span>SMS </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#stumpedia" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_stumpedia"></span>Stumpedia </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#svejo" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_svejo"></span>Svejo </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#symbaloo_feeds" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_symbaloo"></span>Symbaloo Feeds </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#telegram" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_telegram"></span>Telegram </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#tuenti" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_tuenti"></span>Tuenti </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#twiddla" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_twiddla"></span>Twiddla </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#typepad_post" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_typepad"></span>TypePad Post </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#viadeo" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_viadeo"></span>Viadeo </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#viber" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_viber"></span>Viber </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#vk" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_vk"></span>VK </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#wanelo" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_wanelo"></span>Wanelo </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#webnews" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_webnews"></span>Webnews </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#wechat" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_wechat"></span>WeChat </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#wykop" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_wykop"></span>Wykop </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#xing" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_xing"></span>XING </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#yahoo_bookmarks" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_yahoo"></span>Yahoo Bookmarks </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#yahoo_mail" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_yahoo"></span>Yahoo Mail </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#yahoo_messenger" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_yim"></span>Yahoo Messenger </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#yoolink" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_yoolink"></span>Yoolink </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#youmob" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_youmob"></span>YouMob </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#yummly" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_yummly"></span>Yummly </a><i class="a2a_i"></i><i class="a2a_i"></i></div><div class="a2a_full_footer"><a href="https://www.addtoany.com/" title="Share Buttons" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_a2a"></span>AddToAny</a></div></div><div id="a2apage_dropdown" class="a2a_menu a2a_mini" onmouseover="a2a.onMouseOver_stay()" onmouseout="a2a.onMouseOut_delay()" tabindex="-1" aria-label="Partilhar" style="display:none"><div id="a2apage_title_container" class="a2a_menu_title_container" style="display:none"><input id="a2apage_title" class="a2a_menu_title"></div><div class="a2a_mini_services" id="a2apage_mini_services"><a rel="nofollow" class="a2a_i" href="http://rancher.com/#facebook" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_facebook"></span>Facebook </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#twitter" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_twitter"></span>Twitter </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#google_plus" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_google_plus"></span>Google+ </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#pinterest" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_pinterest"></span>Pinterest </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#email" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_email"></span>Email </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#linkedin" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_linkedin"></span>LinkedIn </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#reddit" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_reddit"></span>Reddit </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#tumblr" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_tumblr"></span>Tumblr </a></div><div id="a2apage_cols_container" class="a2a_cols_container"><div class="a2a_col1" id="a2apage_col1"></div><div id="a2apage_2_col1" style="display:none"><a rel="nofollow" class="a2a_i" href="http://rancher.com/#google_gmail" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_gmail"></span>Google Gmail </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#aol_mail" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_aol"></span>AOL Mail </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#outlook_com" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_outlook_com"></span>Outlook.com </a><a rel="nofollow" class="a2a_i" href="http://rancher.com/#yahoo_mail" target="_blank"><span class="a2a_svg a2a_s__default a2a_s_yahoo"></span>Yahoo Mail </a><a rel="nofollow" class="a2a_i a2a_emailer" href="http://rancher.com/#email_form" target="_blank" id="a2apage_any_email"><span class="a2a_svg a2a_s__default a2a_s_email"></span>Any email </a><a rel="nofollow" class="a2a_i a2a_emailer a2a_email_client" href="http://rancher.com/#email_form" target="" id="a2apage_email_client"><span class="a2a_svg a2a_s__default a2a_s_email"></span>Email app</a></div><div class="a2a_clear"></div></div><div class="a2apage_wide a2a_wide"><a href="http://rancher.com/virtual-host-routing-using-rancher-load-balancer/" id="a2apage_show_more_less" class="a2a_menu_show_more_less a2a_more" title="Mostrar tudo"><span class="a2a_svg a2a_s__default a2a_s_a2a"></span>Mais…</a></div></div><div style="height: 1px; width: 1px; position: absolute; z-index: 100000; top: 0px; visibility: hidden;"><iframe id="a2apage_sm_ifr" height="1" width="1" title="AddToAny Utility Frame" transparency="true" allowtransparency="true" frameborder="0" src="./Rancher Labs _ Virtual Host Routing for Docker using Rancher Load Balancer _ Rancher Labs_files/sm13.html" style="height: 1px; width: 1px; border: 0px; left: 0px; top: 0px; position: absolute; z-index: 100000; display: none;"></iframe></div></div><span style="height: 20px; width: 40px; position: absolute; opacity: 1; z-index: 8675309; display: none; cursor: pointer; border: none; top: 4362px; left: 253px; background-image: url(&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAoCAYAAABpYH0BAAAHjElEQVR4Ae1bBXAbvRLO0GNmpv+VmflnZmZmZi4zMzMzM4Y58ZwTz4SZnZzpjLWzBa38Zs8aO332pdy7ma9JPmml1XfSaqXacfgYjRIcPrwP9u7dqSMKHDq0D5hmiLi4vDwJEH6/H86dOxcFdAQCfq5ZQUEexOHM8/l8cPbsWR0xADVD7eJwSuqCaANqpwt4MQTU9uiPLuDFErC1tVUDdFw0AV0l5VA1dS4Y7n4SUv7VD+J/0QHif3YT/1168Dmonb8MfBbr9StgIBDQBE9DE+Q//zYX69QP/3NBJP6pO1TPXgwBvx9trwu0S0BblgFSOwwigRJ+1xnyn3wVqqfNh6aVG6Fu7mIofudzSL1poCCk6aX3wO/1XV8C4ikkFjgKSiD5b71IlIIX3oHTbDayR5ji/GEdVU+dK8zS0m8mYDvXPLQJyDLw7CH3khjlTAx8LmSDYtbOXEg28b/sAPb8Qir3ebxg3ncY5MTUiz5Ir80BTTv2UX+R4KyownraBcRjSbRo3LaHhDDc8Ri0BgKcd5lboOTL0ZDPZqOclBpmh/XSuwwj2+IPv+a81+2B3DsfI75+/VbkLwpczTKkdx+B7fKNzSblCeVl42dA8j/78PLaZWtjbl+TgManXqPBWk4mBXmvF7KH3U98CnOKCRNmW/zul1QnvdfNnDMfPkEcomzklIsmYOWMBULbTdv3Ik8+J/+9N5UpRSXaBfR6vVEj5d99sUMeA/3/4xp3H0ROgFJbF2ZbMW66uun8thPnbAaJ4mMKG5CztAL5i4LGDduov6w+t4FPUahMzjJQWep/B6EgMbdPAno8nqhx6sfBTrMH3k1c6feTwlIW1kGYbdk3E9U4+PMOyPF69uQMqF+8Gk43y2R3MYBxSt5zCJpWb4ZWl1AmzM6CF9/V0r42AZP/3CP4RgfcRVzozEIYH3kxom3Bqx+qb/3f/ThXtXAlSI+9xPAytJxIpLp2FtilJ14F6dGXoPCT78AqmcDI4mtqx8Ec+S+/D0pdwwV9Lfl6QrDtJ14BW1Ep5/JZGpVz+6NsJfUnX9I6D+WcxMKTJgHdbnfUyBn+QHAJ/rojOOobOGfef0QQsHbBioi2Wf3vFDYgxqHzxDEBqW7l3MWq2DcNYEu+c1iYMDz0XJt+Kk1mnOU0251sk7MyEck+AnKDPkULbQJWz1LTEdNbn3FOzsolDpe4s7I6zM5aXAanfqrmgpVs1lpNheqy/2M38DjV+sYnXxUHd/ODUP7VeBbLbicOd9a2/KzbskuwRc7O/Cr7gmUKT71OZXjcLPt8JIclMUWbgE6nM2p4HQ4ekPlO2n045yoox2Nct+HYeJid6d0vQuLff3nuVTl/GXHSwy+o9RVFSNSL3vqMck1bcoa6Ef2+c5t+Fryj9lf+7STOoV/YRtWUuVRW+PrHyCFwWcakBQmoKEpM8LHlYHrmDXSM/y09qaY2mBo4mmWhfgNb4vE/+68QtNEBSZ1lbGYvovpNKapIyX/thUkuldWG7KzZg+9p08eMPreGhgahzHDvU2reuW4LcpqgWUAcfCCYQOPfbBn0FWMTu4FpZstaLiyCEpasJvymkxrP/jOAX0IoDgfmi8RbDRK1XzZ5NvGm594W+i54T51ZpZ+PiuifpbwCQwmd0d0O9QU4rFZI/EMXCjeYbrVbQIfDoRnNBkm4UMD8LkKApnzLXVwanGWpmULizV4KtRk6Q+qWrRX6ywiGDw7zgWMRfapavl59mXc/IZQ1HDlJZRhP0RetY78oAlYuWK7GMTZw64nE0CMbxaoSFgNPt8gkVPm0+VRufPwVag9nT8KvO1CZrbhMLauqoY0Iz9NOiyWiT/mvfED2FSOnCGWYCtFxkvmEXLsFtNvtmmF87i11Z500BwXCKxlQciSQ9x0BR1oWtHr4sQ47JTvp6deF2xniX3qPePYiBJvaXQeoLKPXzW36lNlX3anrWMwkexaLQzOBavbyeRl7EebMnJjHTgJarVbNSOs0hBySU7OQQ1CsxJ+R7LIG3k12Eku8G1nMzHv9I+IQhW98LNhUhOSGiSyhrz8eDzVMVF6uAlMiqpfDLipq2Xm7YulqtBETfnYZ3HAqCQwsiY9ns95skGIae7sFtDQ20hvFkwVuDNHaSvc/g3YC8EysxlC+Qwo2dZt2Ih+G8oUrhXrGR1+KWA83Ddq4RODlL852bQJaLBZNMEt56i0KW4ax2MrH4zE2CsvVcugEJP6e75Bs5+4ItqoawUaxWjEpFs7TRW9+CoosC/W8DCUffsN2224hu39/MG/cCbb4FDyrE48XGHhXiSEm1vG3W8Bmo4kuD5Sa2phscWkHZAvfdFySCeMmcvgf1vj5E/yJbznMLoCpU7YB7EyIQIscceBoh5cSGHudBiO4C0rwZpxCSiuDkmXAfpHHBBvttAsoy7I2VFUHA/WC5dhgrPZoQ5tEDHZYH+3+b59YjnVR0Eg89asR2gVUHaFTBfHXPy6egAhcQtrtdQERuoAtLS06NEAX8GIJaDabdWgAFxA/ptrQUBejsQ7UDLXjHzLPzExjREOUxjpQK9SsoMAIcewf/jWHQ4e0fM1B/5rDebD10oZZukwlAAAAAElFTkSuQmCC&quot;); background-color: transparent; background-size: 40px 20px;"></span></body></html>
