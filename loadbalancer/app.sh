@@ -3,7 +3,7 @@
 # port: 8281 mapped to 80 - 8282 mapped to 80
 # command: /bin/bash
 apt-get update
-apt-get install -y apache2 php5 libapache2-mod-php5 vim
+apt-get install -y apache2 php5 libapache2-mod-php5 vim stress
 cd /var/www/html/
 rm index.html
 vim index.php
