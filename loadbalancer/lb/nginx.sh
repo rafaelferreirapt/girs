@@ -7,7 +7,7 @@
 # http://nginx.org/en/docs/http/load_balancing.html
 # https://www.digitalocean.com/community/tutorials/how-to-set-up-nginx-load-balancing
 sudo apt-get update
-sudo apt-get install -y vim nginx
+sudo apt-get install -y vim nginx # not compiled by source, go to nginx_from_source to see
 sudo vim /etc/nginx/sites-available/default
 
 ###

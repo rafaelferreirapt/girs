@@ -1,0 +1,2 @@
+http://serverfault.com/questions/378769/howto-prevent-snmpd-cache-results-from-extend-script
+https://www.fineconnection.com/how_to_set_the_net-snmp_agent_update_or_counter_refresh_interval/

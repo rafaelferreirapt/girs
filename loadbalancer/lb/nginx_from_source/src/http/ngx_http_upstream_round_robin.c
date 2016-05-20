@@ -11,7 +11,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <stdio.h>
 
+#define SHMSZ     27
 
 #define ngx_http_upstream_tries(p) ((p)->number                               \
                                     + ((p)->next ? (p)->next->number : 0))
@@ -543,119 +548,50 @@ ngx_http_upstream_get_peer(ngx_http_upstream_rr_peer_data_t *rrp)
 #if (NGX_SUPPRESS_WARN)
     p = 0;
 #endif
+    // https://www.cs.cf.ac.uk/Dave/C/node27.html
 
-    printf("Getting app 1 CPU status....\n");
+    int shmid;
+    key_t key;
+    int *shm, *s;
 
-    FILE *fp;
-    char path[1035] = "";
+    /*
+     * We need to get the segment named
+     * "5678", created by the server.
+     */
+    key = 5678;
 
-    /* Open the command for reading. */
-    fp = popen("snmpget -v 3 -u authOnlyUser -l authPriv -a MD5 -A temp_password -x DES -X temp_password 192.168.215.20 'NET-SNMP-EXTEND-MIB::nsExtendOutputFull.\"app1\"'", "r");
-    if (fp == NULL) {
-      printf("Failed to run command\n" );
-      exit(1);
+    /*
+     * Locate the segment.
+     */
+    if ((shmid = shmget(key, SHMSZ, 0666)) < 0) {
+        perror("shmget");
+        exit(1);
     }
 
-    /* Read the output a line at a time - output it. */
-    while (fgets(path, sizeof(path)-1, fp) != NULL) {
-      printf("%s", path);
+    /*
+     * Now we attach the segment to our data space.
+     */
+    if ((shm = shmat(shmid, NULL, 0)) == (int *) -1) {
+        perror("shmat");
+        exit(1);
     }
 
-    /* close */
-    pclose(fp);
+    /*
+     * Now read what the server put in the memory.
+     */
+     s = shm;
 
-    // parse what we need
-    char app1[10];
-
-    int pos = 57;
-    int ip = pos;
-
-    while(path[ip]!=0){
-      app1[ip-pos] = path[ip];
-      ip = ip + 1;
-    }
-
-    int app1_val = parseToInt(app1, 0, ip-pos-1);
-
-    printf("VALUE APP1: %d (%%)\n", app1_val);
-
-    printf("Getting app 2 CPU status....\n");
-    FILE *fp2;
-    char path2[1035];
-
-    /* Open the command for reading. */
-    fp2 = popen("snmpget -v 3 -u authOnlyUser -l authPriv -a MD5 -A temp_password -x DES -X temp_password 192.168.215.20 'NET-SNMP-EXTEND-MIB::nsExtendOutputFull.\"app2\"'", "r");
-    if (fp2 == NULL) {
-      printf("Failed to run command\n" );
-      exit(1);
-    }
-
-    /* Read the output a line at a time - output it. */
-    while (fgets(path2, sizeof(path2)-1, fp2) != NULL) {
-      printf("%s", path2);
-    }
-
-    /* close */
-    pclose(fp2);
-
-    // parse what we need
-    char app2[10];
-
-    ip = pos;
-
-    while(path[ip]!=0){
-      app1[ip-pos] = path[ip];
-      ip = ip + 1;
-    }
-
-    int app2_val = parseToInt(app2, 0, ip-pos-1);
-
-    printf("VALUE APP2: %d (%%)\n", app2_val);
-
-    ngx_uint_t ix = 0;
-
-    if(app1_val>app2_val){
-        ix = 1;
-    }
+     ngx_uint_t ix = *s;
 
     for (peer = rrp->peers->peer, i = 0;
          peer;
          peer = peer->next, i++)
     {
-
-        n = i / (8 * sizeof(uintptr_t));
-        m = (uintptr_t) 1 << i % (8 * sizeof(uintptr_t));
-
-        if (rrp->tried[n] & m) {
-            continue;
-        }
-
-        if (peer->down) {
-            continue;
-        }
-
-        if (peer->max_fails
-            && peer->fails >= peer->max_fails
-            && now - peer->checked <= peer->fail_timeout)
-        {
-            continue;
-        }
-
-        peer->current_weight += peer->effective_weight;
-        total += peer->effective_weight;
-
-        if (peer->effective_weight < peer->weight) {
-            peer->effective_weight++;
-        }
-
         if (best == NULL || i==ix) {
             best = peer;
             p = i;
+            break;
         }
-    }
-
-    if (best == NULL) {
-        return NULL;
     }
 
     rrp->current = best;
