@@ -1,0 +1,18 @@
+---
+# play 1
+- name: Deploy MySQL Container
+  hosts: 'database'
+  roles:
+      - { role: mysql_docker, tags: ["mysql_docker"] }
+
+# play 2
+- name: Deploy WordPress App 1
+  hosts: 'app1'
+  roles:
+    - { role: wordpress_docker1, tags: ["wordpress_docker1"] }
+
+# play 3
+- name: Deploy WordPress App 2
+  hosts: 'app2'
+  roles:
+    - { role: wordpress_docker2, tags: ["wordpress_docker2"] }
